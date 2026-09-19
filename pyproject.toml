@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "synthid-graph"
+version = "0.1.0"
+description = "Détection de fraude à l'identité synthétique par analyse de graphes (GNN) et coopération inter-bancaire chiffrée — preuve de concept"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "asaphfelix03-beep"}]
+requires-python = ">=3.11"
+keywords = ["fraud-detection", "synthetic-identity", "graph-neural-networks", "neo4j", "homomorphic-encryption", "privacy"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Security :: Cryptography",
+]
+dependencies = [
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "pyarrow>=14",
+  "pyyaml>=6",
+  "scipy>=1.11",
+  "scikit-learn>=1.4",
+  "networkx>=3.2",
+  "lightgbm>=4.3",
+  "faker>=24",
+  "rapidfuzz>=3.6",
+  "phe>=1.5",
+  "gmpy2>=2.1",
+  "coincurve>=19",
+]
+
+[project.optional-dependencies]
+gnn = ["torch>=2.4", "torch_geometric>=2.5"]
+neo4j = ["neo4j>=5.14"]
+video = ["playwright>=1.40", "imageio-ffmpeg>=0.5", "pillow>=10"]
+dev = ["pytest>=8", "ruff>=0.6"]
+all = ["synthid-graph[gnn,neo4j,video,dev]"]
+
+[project.urls]
+Repository = "https://github.com/asaphfelix03-beep/synthid-graph"
+
+[project.scripts]
+synthid = "synthid.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+synthid = ["schema.cypher"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E731", "B905"]
