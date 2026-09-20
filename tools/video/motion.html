@@ -2,13 +2,13 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<title>SynthID-Graph — vidéo</title>
+<title>SynthID-Graph — vidéo explicative</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&display=swap">
 <style>
   :root {
     --bg: #0b1117; --card: #121c25; --card2: #17232e; --line: #243441;
     --ink: #eef3f6; --ink2: #b9c6d2; --muted: #8596a6;
-    --teal: #4fd1c5; --blue: #3987e5; --orange: #e8793a; --green: #1faa77; --red: #f2667a;
+    --teal: #4fd1c5; --blue: #3987e5; --orange: #e8793a; --green: #1faa77; --red: #f2667a; --yellow: #e8b04a;
   }
   html, body { margin: 0; background: #000; }
   #stage {
@@ -17,112 +17,45 @@
     background: radial-gradient(1100px 700px at 12% 8%, rgba(79,209,197,0.10), transparent 70%),
                 radial-gradient(900px 600px at 95% 100%, rgba(57,135,229,0.10), transparent 70%), var(--bg);
   }
-  .scene { position: absolute; inset: 0; opacity: 0; }
+  .scene { position: absolute; inset: 0; opacity: 0; display: none; }
+  .scene svg.full { position: absolute; left: 0; top: 0; }
   .abs { position: absolute; }
   .serif { font-family: 'Source Serif 4', Georgia, serif; }
   .mono { font-family: 'IBM Plex Mono', Consolas, monospace; }
-  .head { position: absolute; left: 120px; top: 150px; font-family: 'Source Serif 4', Georgia, serif; font-weight: 700; font-size: 66px; line-height: 1.08; letter-spacing: -0.5px; opacity: 0; width: 1100px; }
+  .head { position: absolute; left: 120px; top: 150px; width: 1120px; font-family: 'Source Serif 4', Georgia, serif; font-weight: 700; font-size: 64px; line-height: 1.08; letter-spacing: -0.5px; opacity: 0; }
   .kick { font: 600 22px/1.2 'IBM Plex Sans', sans-serif; letter-spacing: 4px; text-transform: uppercase; color: var(--teal); }
-  .card { background: var(--card); border: 2px solid var(--line); border-radius: 22px; }
-  .chip { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px; background: var(--card2); border: 1.5px solid var(--line); font-size: 28px; color: var(--ink2); }
+  .card { background: var(--card); border: 2px solid var(--line); border-radius: 22px; box-sizing: border-box; }
+  .chip { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 999px; background: var(--card2); border: 1.5px solid var(--line); font-size: 28px; color: var(--ink2); white-space: nowrap; }
+  .row { display: flex; align-items: center; gap: 16px; font-size: 30px; color: var(--ink2); }
+  .ok { width: 40px; height: 40px; border-radius: 50%; background: rgba(79,209,197,0.16); color: var(--teal); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 26px; flex: none; }
+  .avatar { width: 84px; height: 84px; border-radius: 50%; background: linear-gradient(135deg, #2c4458, #1b2a36); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 30px; color: var(--ink2); flex: none; }
+  .gauge { position: relative; height: 22px; border-radius: 11px; background: #0d151c; border: 1.5px solid var(--line); overflow: hidden; }
+  .gauge i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 11px; }
+  .tag { font: 700 20px/1 'IBM Plex Sans', sans-serif; letter-spacing: 2px; text-transform: uppercase; padding: 8px 14px; border-radius: 8px; white-space: nowrap; }
+  .tag.real { color: var(--teal); background: rgba(79,209,197,0.14); }
+  .tag.fake { color: var(--orange); background: rgba(232,121,58,0.16); }
+  .stamp { position: absolute; padding: 12px 26px; border: 5px solid var(--red); color: var(--red); font: 800 44px/1 'IBM Plex Sans', sans-serif; letter-spacing: 6px; border-radius: 10px; opacity: 0; white-space: nowrap; }
 
   /* barre de chapitres */
-  #topbar { position: absolute; left: 120px; right: 120px; top: 44px; display: flex; align-items: center; justify-content: space-between; z-index: 20; }
+  #topbar { position: absolute; left: 120px; right: 120px; top: 44px; display: flex; align-items: center; justify-content: space-between; z-index: 20; opacity: 0; }
   #brand { font: 700 28px/1 'IBM Plex Sans', sans-serif; letter-spacing: 1px; }
   #brand span { color: var(--teal); }
-  #chapters { display: flex; gap: 14px; }
-  .chap { position: relative; padding: 10px 20px 14px; border-radius: 12px; font-size: 22px; font-weight: 500; color: var(--muted); background: rgba(255,255,255,0.03); }
-  .chap .bar { position: absolute; left: 20px; right: 20px; bottom: 7px; height: 3px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  #chapters { display: flex; gap: 10px; }
+  .chap { position: relative; padding: 10px 16px 14px; border-radius: 12px; font-size: 20px; font-weight: 500; color: var(--muted); background: rgba(255,255,255,0.03); white-space: nowrap; }
+  .chap .bar { position: absolute; left: 16px; right: 16px; bottom: 7px; height: 3px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; }
   .chap .bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--teal); }
   .chap.on { color: var(--ink); background: rgba(79,209,197,0.12); }
   .chap.done { color: var(--ink2); }
 
+  /* définitions (lexique) */
+  #defbox { position: absolute; left: 1330px; top: 130px; width: 470px; box-sizing: border-box; padding: 22px 26px 24px; border-radius: 18px; background: rgba(16,26,34,0.97); border: 2px solid var(--teal); box-shadow: 0 18px 50px rgba(0,0,0,0.45); opacity: 0; z-index: 25; }
+  #defbox .dk { display: flex; justify-content: space-between; font: 600 18px/1 'IBM Plex Sans', sans-serif; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); }
+  #defbox .dk span:last-child { color: var(--muted); letter-spacing: 1px; }
+  #defbox .dt { margin-top: 14px; font: 700 34px/1.15 'Source Serif 4', Georgia, serif; color: #fff; }
+  #defbox .dx { margin-top: 10px; font-size: 26px; line-height: 1.32; color: var(--ink2); }
+
   /* sous-titres */
-  #caption { position: absolute; left: 50%; bottom: 50px; transform: translateX(-50%); max-width: 1560px; width: max-content; text-align: center; font-size: 40px; line-height: 1.32; font-weight: 500; padding: 16px 34px; border-radius: 16px; background: rgba(4,8,12,0.78); color: #fff; opacity: 0; z-index: 30; }
-
-  /* scène : accroche */
-  #hk-card { left: 180px; top: 250px; width: 620px; padding: 38px 44px; opacity: 0; }
-  .avatar { width: 84px; height: 84px; border-radius: 50%; background: linear-gradient(135deg, #2c4458, #1b2a36); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 30px; color: var(--ink2); }
-  .row { display: flex; align-items: center; gap: 16px; font-size: 30px; color: var(--ink2); }
-  .ok { width: 40px; height: 40px; border-radius: 50%; background: rgba(79,209,197,0.16); color: var(--teal); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 26px; flex: none; }
-  .gauge { position: relative; height: 22px; border-radius: 11px; background: #0d151c; border: 1.5px solid var(--line); overflow: hidden; }
-  .gauge i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 11px; }
-  #hk-stamp { left: 470px; top: 560px; padding: 12px 26px; border: 5px solid var(--red); color: var(--red); font: 800 44px/1 'IBM Plex Sans', sans-serif; letter-spacing: 6px; border-radius: 10px; opacity: 0; transform: rotate(-12deg); }
-  .bighead { position: absolute; left: 940px; top: 330px; width: 860px; font-family: 'Source Serif 4', Georgia, serif; font-weight: 700; font-size: 96px; line-height: 1.02; opacity: 0; }
-
-  /* scène : identité synthétique */
-  .piece { position: absolute; left: 150px; width: 640px; padding: 22px 28px; border-radius: 18px; background: var(--card); border: 2px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 30px; opacity: 0; }
-  .tag { font: 700 20px/1 'IBM Plex Sans', sans-serif; letter-spacing: 2px; text-transform: uppercase; padding: 8px 14px; border-radius: 8px; }
-  .tag.real { color: var(--teal); background: rgba(79,209,197,0.14); }
-  .tag.fake { color: var(--orange); background: rgba(232,121,58,0.16); }
-  #wt-tl { left: 900px; top: 400px; width: 880px; opacity: 0; }
-  .seg { position: absolute; top: 0; height: 26px; border-radius: 13px; }
-  .seglab { position: absolute; top: 46px; font-size: 26px; color: var(--ink2); line-height: 1.25; }
-  #wt-marker { position: absolute; top: -14px; width: 54px; height: 54px; margin-left: -27px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 8px rgba(255,255,255,0.12); }
-  #wt-grid { left: 260px; top: 300px; width: 1400px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 26px; }
-  .mini { height: 150px; border-radius: 16px; background: var(--card); border: 2px solid var(--orange); opacity: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; }
-  .mini .a { width: 46px; height: 46px; border-radius: 50%; background: #2a3c4c; }
-  .mini .l { width: 110px; height: 10px; border-radius: 5px; background: #2a3c4c; }
-  #wt-ringlab { left: 0; right: 0; top: 826px; text-align: center; font-size: 40px; font-weight: 600; opacity: 0; }
-
-  /* scène : pourquoi c'est dur */
-  #hd-card { left: 150px; top: 290px; width: 700px; padding: 38px 44px; opacity: 0; display: flex; flex-direction: column; gap: 26px; }
-  #hd-count { left: 1000px; top: 250px; font: 700 300px/1 'Source Serif 4', Georgia, serif; color: var(--red); opacity: 0; }
-  #hd-label { left: 1010px; top: 580px; width: 760px; font-size: 38px; line-height: 1.3; color: var(--ink); opacity: 0; }
-  #hd-note { left: 1010px; top: 700px; font-size: 26px; color: var(--muted); opacity: 0; }
-
-  /* scène : l'idée */
-  #id-svg { position: absolute; left: 0; top: 0; }
-  #id-lab { opacity: 0; }
-
-  /* scène : construit */
-  #bt-grid { left: 150px; top: 276px; width: 1620px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-  .blk { padding: 30px 34px; border-radius: 20px; background: var(--card); border: 2px solid var(--line); opacity: 0.18; display: flex; flex-direction: column; gap: 12px; }
-  .blk .n { font: 600 22px/1 'IBM Plex Mono', monospace; color: var(--teal); }
-  .blk h3 { margin: 0; font-size: 36px; font-weight: 700; }
-  .blk p { margin: 0; font-size: 27px; color: var(--ink2); line-height: 1.3; }
-  #bt-chips { left: 150px; top: 790px; display: flex; gap: 16px; opacity: 0; }
-
-  /* scène : démo */
-  #dm-win { left: 240px; top: 150px; width: 1440px; border-radius: 16px; overflow: hidden; border: 2px solid var(--line); background: #fff; opacity: 0; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
-  #dm-title { height: 44px; background: #1a2530; display: flex; align-items: center; gap: 10px; padding: 0 18px; font-size: 20px; color: var(--ink2); }
-  #dm-title b { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
-  #dm-view { position: relative; width: 1440px; height: 674px; overflow: hidden; background: #f5f6f7; }
-  #dm-view img { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
-  #dm-hl, #dm-hl2 { position: absolute; border: 5px solid var(--orange); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(10,16,22,0.28); opacity: 0; }
-  #dm-hl2 { border-color: var(--teal); box-shadow: none; }
-  #dm-ring { position: absolute; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 6px solid var(--orange); opacity: 0; }
-  #dm-ripple { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 4px solid var(--orange); opacity: 0; }
-  #dm-cursor { position: absolute; width: 44px; height: 44px; opacity: 0; }
-  .callout { position: absolute; padding: 16px 22px; border-radius: 14px; background: #101820; color: #fff; font-size: 28px; line-height: 1.3; border: 2px solid var(--orange); opacity: 0; max-width: 520px; box-shadow: 0 12px 30px rgba(0,0,0,0.35); }
-  .callout.t { border-color: var(--teal); }
-  #dm-chip { left: 24px; top: 20px; opacity: 0; }
-
-  /* scène : coopération */
-  #cp-svg { position: absolute; left: 0; top: 0; }
-  .data { position: absolute; left: 470px; width: 330px; padding: 14px 18px; border-radius: 12px; background: var(--card); border: 2px solid var(--line); font: 500 28px/1.2 'IBM Plex Mono', monospace; text-align: center; opacity: 0; }
-  #cp-big { left: 0; right: 0; top: 300px; text-align: center; opacity: 0; }
-  #cp-res { left: 1480px; top: 420px; width: 330px; box-sizing: border-box; padding: 18px 24px; border-radius: 14px; background: #101820; border: 2px solid var(--teal); font-size: 26px; line-height: 1.3; opacity: 0; }
-
-  /* scène : résultats */
-  #rs-title { left: 150px; top: 160px; font: 700 54px/1.1 'Source Serif 4', Georgia, serif; opacity: 0; }
-  .rrow { position: absolute; left: 150px; width: 1620px; height: 80px; display: flex; align-items: center; opacity: 0; }
-  .rrow .lab { box-sizing: border-box; width: 480px; font-size: 32px; color: var(--ink); padding-right: 30px; text-align: right; }
-  .rrow .track { position: relative; width: 1000px; height: 46px; }
-  .rrow .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 0 8px 8px 0; }
-  .rrow .v { position: absolute; top: 50%; transform: translateY(-50%); font: 700 36px/1 'IBM Plex Sans', sans-serif; white-space: nowrap; }
-  #rs-grid { position: absolute; left: 630px; top: 300px; width: 1000px; height: 440px; opacity: 0; }
-  #rs-grid i { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.08); }
-  #rs-grid span { position: absolute; bottom: -44px; transform: translateX(-50%); font-size: 24px; color: var(--muted); white-space: nowrap; }
-  #rs-kpis { left: 150px; right: 150px; top: 330px; display: flex; gap: 40px; justify-content: center; opacity: 0; }
-  .kpi { width: 700px; padding: 40px 48px; border-radius: 24px; background: var(--card); border: 2px solid var(--teal); }
-  .kpi .v { font: 700 120px/1 'IBM Plex Sans', sans-serif; }
-  .kpi .l { margin-top: 12px; font-size: 34px; color: var(--ink2); }
-
-  /* scène : fin */
-  #ou-badges { left: 0; right: 0; top: 380px; display: flex; justify-content: center; gap: 30px; }
-  .badge { padding: 28px 36px; border-radius: 20px; background: var(--card); border: 2px solid var(--line); font-size: 34px; font-weight: 600; opacity: 0; }
-  #ou-final { left: 0; right: 0; top: 250px; text-align: center; opacity: 0; }
+  #caption { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); max-width: 1600px; width: max-content; text-align: center; font-size: 38px; line-height: 1.3; font-weight: 500; padding: 14px 32px; border-radius: 16px; background: rgba(4,8,12,0.80); color: #fff; opacity: 0; z-index: 30; }
 </style>
 </head>
 <body>
@@ -134,464 +67,1043 @@
   </div>
 
   <!-- ============ ACCROCHE ============ -->
-  <section class="scene" id="sc-hook">
-    <div class="abs card" id="hk-card">
+  <section class="scene" id="sc-intro">
+    <svg class="full" id="in-svg" width="1920" height="1080"></svg>
+    <div class="abs" id="in-wrap" style="left:120px; right:120px; top:600px; text-align:center">
+      <div class="serif" id="in-q0" style="font-size:62px; font-weight:700; line-height:1.14; opacity:0">Comment une banque peut-elle repérer un client…</div>
+      <div class="serif" id="in-q1" style="font-size:80px; font-weight:700; line-height:1.14; color:var(--orange); margin-top:16px; opacity:0">… qui n'existe pas&#8239;?</div>
+    </div>
+  </section>
+
+  <!-- ============ CONTEXTE : LA CONFIANCE ============ -->
+  <section class="scene" id="sc-trust">
+    <div class="head" id="tr-h0">Ouvrir un compte</div>
+    <div class="head" id="tr-h1">La confiance se construit</div>
+    <div class="head" id="tr-h2">Une hypothèse toute simple</div>
+    <div class="abs card" id="tr-card" style="left:120px; top:330px; width:620px; padding:34px 38px; opacity:0">
       <div style="display:flex; gap:22px; align-items:center">
-        <div class="avatar">C</div>
-        <div><div style="font-size:36px; font-weight:700">Client n° 48213</div><div style="font-size:26px; color:var(--muted)">Client depuis 9 mois</div></div>
+        <div class="avatar">V</div>
+        <div><div style="font-size:36px; font-weight:700">Vous</div><div style="font-size:26px; color:var(--muted)">Nouveau client</div></div>
       </div>
-      <div style="display:flex; flex-direction:column; gap:18px; margin-top:30px">
-        <div class="row" id="hk-r0"><span class="ok">✓</span>Rembourse toujours à l'heure</div>
-        <div class="row" id="hk-r1"><span class="ok">✓</span>Plafond de crédit augmenté</div>
-        <div class="row" id="hk-r2"><span class="ok">✓</span>Aucun incident</div>
+      <div style="display:flex; flex-direction:column; gap:16px; margin-top:28px">
+        <div class="row" id="tr-r0"><span class="ok">✓</span>Pièce d'identité vérifiée</div>
+        <div class="row" id="tr-r1"><span class="ok">✓</span>Compte ouvert</div>
+        <div class="row" id="tr-r2"><span class="ok">✓</span>Crédit accordé</div>
       </div>
-      <div style="margin-top:34px; font-size:24px; color:var(--muted)">Confiance de la banque</div>
-      <div class="gauge" style="margin-top:10px"><i id="hk-trust" style="background:var(--teal)"></i></div>
-      <div style="margin-top:22px; font-size:24px; color:var(--muted)">Crédit utilisé</div>
-      <div class="gauge" style="margin-top:10px"><i id="hk-used" style="background:var(--teal)"></i></div>
+      <div style="margin-top:28px; font-size:24px; color:var(--muted)">Plafond de crédit</div>
+      <div class="serif" id="tr-amount" style="font-size:72px; font-weight:700; line-height:1.1; color:var(--teal)">500 €</div>
     </div>
-    <div class="abs" id="hk-stamp">INTROUVABLE</div>
-    <div class="bighead" id="hk-h0" style="color:var(--teal)">Un client modèle.</div>
-    <div class="bighead" id="hk-h1" style="color:var(--red)">Puis, tout est vidé.</div>
-    <div class="bighead" id="hk-h2">Il n'a jamais existé.</div>
+    <svg class="abs" id="tr-svg" width="960" height="430" style="left:860px; top:400px; opacity:0"></svg>
+    <div class="abs card" id="tr-final" style="left:900px; top:470px; width:860px; padding:40px 46px; border-color:var(--teal); opacity:0">
+      <div class="kick">Le socle du système</div>
+      <div style="font-size:46px; font-weight:700; line-height:1.25; margin-top:18px">Chaque client est<br>une <span style="color:var(--teal)">vraie personne</span>.</div>
+    </div>
   </section>
 
-  <!-- ============ IDENTITÉ SYNTHÉTIQUE ============ -->
-  <section class="scene" id="sc-what">
-    <div class="head" id="wt-h0">Un vrai numéro d'identité…</div>
-    <div class="head" id="wt-h1">…et des éléments inventés</div>
-    <div class="head" id="wt-h2">Cultiver, puis tout vider</div>
-    <div class="head" id="wt-h3">Des dizaines à la fois</div>
-    <div class="piece" id="wt-p0" style="top:300px"><span>N° d'identité</span><span class="tag real">réel · volé</span></div>
-    <div class="piece" id="wt-p1" style="top:400px"><span>Nom</span><span class="tag fake">inventé</span></div>
-    <div class="piece" id="wt-p2" style="top:500px"><span>Date de naissance</span><span class="tag fake">inventée</span></div>
-    <div class="piece" id="wt-p3" style="top:600px"><span>Téléphone, e-mail</span><span class="tag fake">inventés</span></div>
-    <div class="abs" id="wt-tl">
-      <div style="position:relative; height:120px">
-        <div class="seg" style="left:0; width:15%; background:#3a4d5e"></div>
-        <div class="seg" style="left:17%; width:62%; background:var(--teal)"></div>
-        <div class="seg" style="left:81%; width:19%; background:var(--red)"></div>
-        <div class="seglab" style="left:0">Création</div>
-        <div class="seglab" style="left:17%">Culture<br><span style="color:var(--muted)">6 à 20 mois</span></div>
-        <div class="seglab" style="left:81%; color:var(--red)">Bust&#8209;out<br><span style="color:var(--muted)">quelques jours</span></div>
-        <div id="wt-marker"></div>
+  <!-- ============ L'IDENTITÉ SYNTHÉTIQUE ============ -->
+  <section class="scene" id="sc-synth">
+    <div class="head" id="sy-h0">Fabriquer une fausse personne</div>
+    <div class="head" id="sy-h1">Du vrai et du faux, mélangés</div>
+    <div class="head" id="sy-h2">Une identité « synthétique »</div>
+    <svg class="full" id="sy-svg" width="1920" height="1080"></svg>
+    <div class="abs pc" id="sy-p0" style="top:330px"><div><div class="pl">N° d'identité</div><div class="pv mono">1 85 07 75 123 456</div></div><span class="tag real">réel · volé</span></div>
+    <div class="abs pc" id="sy-p1" style="top:432px"><div><div class="pl">Nom</div><div class="pv">Lucas Martin</div></div><span class="tag fake">inventé</span></div>
+    <div class="abs pc" id="sy-p2" style="top:534px"><div><div class="pl">Date de naissance</div><div class="pv">12 mars 1991</div></div><span class="tag fake">inventée</span></div>
+    <div class="abs pc" id="sy-p3" style="top:636px"><div><div class="pl">Téléphone</div><div class="pv mono">06 12 34 56 78</div></div><span class="tag fake">inventé</span></div>
+    <div class="abs card" id="sy-card" style="left:1020px; top:380px; width:620px; padding:34px 38px; opacity:0">
+      <div style="display:flex; gap:22px; align-items:center">
+        <div class="avatar" id="sy-face" style="border-style:dashed; border-color:var(--orange); color:var(--orange)">?</div>
+        <div><div style="font-size:36px; font-weight:700">Lucas Martin</div><div style="font-size:26px; color:var(--muted)">Client n° 48213</div></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:14px; margin-top:26px; font-size:27px; color:var(--ink2)">
+        <div id="sy-f0" style="opacity:0">N° d'identité · <span class="mono">1 85 07 75 123 456</span></div>
+        <div id="sy-f1" style="opacity:0">Né le 12 mars 1991</div>
+        <div id="sy-f2" style="opacity:0">Tél. <span class="mono">06 12 34 56 78</span></div>
+        <div id="sy-f3" style="opacity:0">Employeur déclaré · Nova Conseil</div>
       </div>
     </div>
-    <div class="abs" id="wt-grid"></div>
-    <div class="abs" id="wt-ringlab">Un anneau : des dizaines de faux clients, pilotés par un même fraudeur</div>
+    <div class="stamp" id="sy-stamp" style="left:1140px; top:772px; border-color:var(--orange); color:var(--orange); font-size:34px; letter-spacing:4px">IDENTITÉ FABRIQUÉE</div>
+  </section>
+<style>
+  .pc { left: 160px; width: 620px; box-sizing: border-box; padding: 16px 26px; border-radius: 16px; background: var(--card); border: 2px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 20px; opacity: 0; }
+  .pc .pl { font-size: 22px; color: var(--muted); }
+  .pc .pv { font-size: 32px; font-weight: 600; margin-top: 4px; }
+</style>
+
+  <!-- ============ LE BUST-OUT ============ -->
+  <section class="scene" id="sc-bust">
+    <div class="head" id="bu-h0">Des mois de client parfait</div>
+    <div class="head" id="bu-h1">Le plafond grimpe</div>
+    <div class="head" id="bu-h2">Puis tout est vidé</div>
+    <div class="head" id="bu-h3">Personne ne rembourse</div>
+    <div class="abs card" id="bu-card" style="left:120px; top:320px; width:600px; padding:30px 36px; opacity:0">
+      <div style="display:flex; gap:22px; align-items:center">
+        <div class="avatar" id="bu-face" style="border-style:dashed; border-color:var(--orange); color:var(--orange)">?</div>
+        <div><div style="font-size:34px; font-weight:700">Lucas Martin</div><div style="font-size:25px; color:var(--muted)">Client depuis <span id="bu-months">1 mois</span></div></div>
+      </div>
+      <div style="margin-top:24px; font-size:24px; color:var(--muted)">Plafond de crédit</div>
+      <div class="serif" id="bu-plaf" style="font-size:64px; font-weight:700; line-height:1.1; color:var(--teal)">500 €</div>
+      <div style="margin-top:18px; font-size:24px; color:var(--muted)">Crédit utilisé</div>
+      <div class="gauge" style="margin-top:10px"><i id="bu-used" style="background:var(--teal)"></i></div>
+      <div id="bu-pay" style="margin-top:20px; font-size:26px; color:var(--ink2)">✓ <span id="bu-payn">0</span> remboursements à l'heure</div>
+    </div>
+    <div class="stamp" id="bu-stamp" style="left:230px; top:750px">INTROUVABLE</div>
+    <div class="abs card" id="bu-loss" style="left:790px; top:330px; width:540px; padding:22px 30px; border-color:var(--red); opacity:0">
+      <div style="font-size:25px; color:var(--muted)">Perte pour la banque</div>
+      <div class="serif" style="font-size:54px; font-weight:700; color:var(--red); line-height:1.1">8 000 €</div>
+    </div>
+    <svg class="abs" id="bu-svg" width="1020" height="380" style="left:790px; top:500px"></svg>
   </section>
 
-  <!-- ============ POURQUOI C'EST DUR ============ -->
-  <section class="scene" id="sc-hard">
-    <div class="head" id="hd-h0">Vu seul, irréprochable</div>
-    <div class="head" id="hd-h1">Les règles passent à côté</div>
-    <div class="abs card" id="hd-card">
-      <div class="row" id="hd-r0"><span class="ok">✓</span>Paie à l'heure</div>
-      <div class="row" id="hd-r1"><span class="ok">✓</span>Déclare un emploi</div>
-      <div class="row" id="hd-r2"><span class="ok">✓</span>Revenu dans la moyenne</div>
-      <div class="row" id="hd-r3"><span class="ok">✓</span>Historique de crédit correct</div>
+  <!-- ============ L'ANNEAU ============ -->
+  <section class="scene" id="sc-ring">
+    <div class="head" id="rg-h0">Pas une, mais des dizaines</div>
+    <div class="head" id="rg-h1">Un anneau de fraude</div>
+    <svg class="full" id="rg-svg" width="1920" height="1080"></svg>
+    <div class="abs" id="rg-grid" style="left:140px; top:320px; width:1100px; display:grid; grid-template-columns:repeat(6,165px); gap:22px"></div>
+  </section>
+<style>
+  .mini { height: 118px; box-sizing: border-box; border-radius: 14px; background: var(--card); border: 2px solid var(--line); opacity: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .mini .a { width: 42px; height: 42px; border-radius: 50%; background: #2a3c4c; }
+  .mini .n { font-size: 21px; color: var(--ink2); }
+</style>
+
+  <!-- ============ LE PIÈGE : QUIZ ============ -->
+  <section class="scene" id="sc-quiz">
+    <div class="head" id="qz-h0">Lesquels sont faux&#8239;?</div>
+    <div class="head" id="qz-h1">Impossible à dire</div>
+    <div class="head" id="qz-h2">Les règles passent à côté</div>
+    <svg class="abs" id="qz-timer" width="160" height="160" style="left:1620px; top:135px; opacity:0"></svg>
+    <div class="abs" id="qz-cards" style="left:140px; top:330px; width:1640px; display:grid; grid-template-columns:repeat(4,380px); gap:40px"></div>
+    <div class="abs card" id="qz-rules" style="left:280px; top:420px; width:1360px; padding:34px 44px; border-color:var(--blue); opacity:0">
+      <div class="kick" style="color:var(--blue)">Détection par règles classiques</div>
+      <div style="display:flex; align-items:center; gap:36px; margin-top:22px">
+        <div class="serif" style="font-size:92px; font-weight:700; line-height:1; white-space:nowrap">3<span style="color:var(--muted); font-size:52px"> / 20</span></div>
+        <div style="font-size:29px; color:var(--ink2); line-height:1.3">anneaux rusés repérés<br><span style="color:var(--muted); font-size:25px">17 passent entre les mailles</span></div>
+        <div id="qz-icons" style="margin-left:auto; display:grid; grid-template-columns:repeat(10,42px); gap:9px"></div>
+      </div>
     </div>
-    <div class="abs" id="hd-count">0 %</div>
-    <div class="abs" id="hd-label">seulement des anneaux les plus rusés repérés par les règles classiques</div>
-    <div class="abs" id="hd-note">Banc d'essai simulé · 20 anneaux de niveau « rusé »</div>
   </section>
 
-  <!-- ============ L'IDÉE ============ -->
-  <section class="scene" id="sc-idea">
-    <div class="head" id="id-h0">Regarder le réseau</div>
-    <div class="head" id="id-h1">Des points de contact partagés</div>
-    <div class="head" id="id-h2">Le réseau trahit le groupe</div>
-    <svg id="id-svg" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+  <!-- ============ L'IDÉE : LE GRAPHE ============ -->
+  <section class="scene" id="sc-graph">
+    <div class="head" id="gp-h0">Et si on regardait les liens&#8239;?</div>
+    <div class="head" id="gp-h1">Téléphone, appareil, employeur, adresse</div>
+    <div class="head" id="gp-h2">Trois d'entre eux partagent tout</div>
+    <div class="head" id="gp-h3">Ce réseau s'appelle un graphe</div>
+    <svg class="full" id="gp-svg" width="1920" height="1080"></svg>
+    <div class="abs chip" id="gp-answer" style="left:120px; top:258px; border-color:var(--teal); color:var(--ink); opacity:0">Réponse du quiz : Martin, Diallo et Kouassi sont faux</div>
   </section>
+<style>
+  .qc { position: relative; box-sizing: border-box; padding: 26px 28px; border-radius: 20px; background: var(--card); border: 2px solid var(--line); display: flex; flex-direction: column; gap: 14px; opacity: 0; }
+  .qc .top { display: flex; align-items: center; gap: 18px; }
+  .qc .nm { font-size: 30px; font-weight: 700; }
+  .qc .sb { font-size: 22px; color: var(--muted); margin-top: 2px; }
+  .qc .li { display: flex; align-items: center; gap: 12px; font-size: 24px; color: var(--ink2); }
+  .qc .li i { width: 28px; height: 28px; border-radius: 50%; background: rgba(79,209,197,0.16); color: var(--teal); display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-style: normal; font-weight: 700; flex: none; }
+  .qc .risk { margin-top: 4px; align-self: flex-start; padding: 8px 16px; border-radius: 999px; font-size: 22px; font-weight: 600; background: rgba(31,170,119,0.16); color: var(--green); }
+  .qc .qm { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font: 700 150px/1 'Source Serif 4', Georgia, serif; color: rgba(133,150,166,0.45); opacity: 0; }
+  .ri { width: 42px; height: 42px; border-radius: 50%; border: 3px dashed #35485a; box-sizing: border-box; }
+  .ri.hit { border: 3px solid var(--blue); background: rgba(57,135,229,0.3); }
+</style>
 
-  <!-- ============ CONSTRUIT ============ -->
-  <section class="scene" id="sc-built">
-    <div class="head" id="bt-h0">Une preuve de concept complète</div>
-    <div class="abs" id="bt-grid">
-      <div class="blk" id="bt-b0"><div class="n">01</div><h3>Simulateur</h3><p>3 banques · 20 000 clients · 110 anneaux de fraudeurs</p></div>
-      <div class="blk" id="bt-b1"><div class="n">02</div><h3>Données protégées</h3><p>Chaque donnée personnelle devient un code</p></div>
-      <div class="blk" id="bt-b2"><div class="n">03</div><h3>Graphe Neo4j</h3><p>198 000 nœuds · 682 000 liens</p></div>
-      <div class="blk" id="bt-b3"><div class="n">04</div><h3>IA sur graphe</h3><p>LightGBM + réseaux de neurones sur graphe (GNN)</p></div>
-      <div class="blk" id="bt-b4"><div class="n">05</div><h3>Coopération chiffrée</h3><p>OPRF + chiffrement Paillier 3072 bits</p></div>
-      <div class="blk" id="bt-b5"><div class="n">06</div><h3>Dossiers d'enquête</h3><p>Alertes regroupées par anneau</p></div>
+  <!-- ============ LE PROJET ============ -->
+  <section class="scene" id="sc-how">
+    <div class="head" id="hw-h0">Un monde simulé</div>
+    <div class="head" id="hw-h1">Pourquoi simulé&#8239;?</div>
+    <div class="head" id="hw-h2">Des codes, pas des données</div>
+    <div class="head" id="hw-h3">Un graphe dans Neo4j</div>
+    <div class="head" id="hw-h4">Une IA qui regarde les voisins</div>
+    <div class="abs" id="hw-steps" style="left:120px; top:330px; width:560px; display:flex; flex-direction:column; gap:18px"></div>
+
+    <div class="abs" id="hw-stats" style="left:740px; top:330px; width:1060px; display:grid; grid-template-columns:repeat(3,1fr); gap:24px; opacity:0">
+      <div class="card" style="padding:24px 26px"><div class="serif" style="font-size:56px; font-weight:700; color:var(--teal)">3</div><div style="font-size:26px; color:var(--ink2); margin-top:6px">banques</div></div>
+      <div class="card" style="padding:24px 26px"><div class="serif" style="font-size:56px; font-weight:700; color:var(--teal)">20 684</div><div style="font-size:26px; color:var(--ink2); margin-top:6px">clients simulés</div></div>
+      <div class="card" style="padding:24px 26px"><div class="serif" style="font-size:56px; font-weight:700; color:var(--orange)">110</div><div style="font-size:26px; color:var(--ink2); margin-top:6px">anneaux cachés</div></div>
     </div>
-    <div class="abs" id="bt-chips">
-      <span class="chip">Python</span><span class="chip">Neo4j + GDS</span><span class="chip">PyTorch Geometric</span><span class="chip">LightGBM</span><span class="chip">Docker</span>
+    <div class="abs" id="hw-why" style="left:740px; top:330px; width:1060px; display:grid; grid-template-columns:repeat(2,1fr); gap:24px; opacity:0">
+      <div class="card" style="padding:26px 30px"><div class="kick">Confidentialité</div><div style="font-size:28px; line-height:1.3; margin-top:14px; color:var(--ink2)">Les vraies données bancaires ne sortent jamais des banques.</div></div>
+      <div class="card" style="padding:26px 30px; border-color:var(--orange)"><div class="kick" style="color:var(--orange)">Vérité connue</div><div style="font-size:28px; line-height:1.3; margin-top:14px; color:var(--ink2)">Ici, on sait exactement qui triche : on peut donc mesurer.</div></div>
     </div>
+    <svg class="abs" id="hw-dots" width="1060" height="330" style="left:740px; top:530px; opacity:0"></svg>
+
+    <div class="abs" id="hw-tok" style="left:740px; top:360px; width:1060px; opacity:0">
+      <div class="tk" id="hw-t0"><span class="v mono">06 12 34 56 78</span><span class="ar">→</span><span class="c mono">a8f3c91e0b…</span></div>
+      <div class="tk" id="hw-t1"><span class="v mono">1 85 07 75 123 456</span><span class="ar">→</span><span class="c mono">5c2e77d41f…</span></div>
+      <div class="tk" id="hw-t2"><span class="v">12 rue des Lilas</span><span class="ar">→</span><span class="c mono">e10b9a3c66…</span></div>
+      <div style="margin-top:34px; font-size:28px; color:var(--muted)">Le système voit les liens entre les codes, jamais les vraies valeurs.</div>
+    </div>
+
+    <svg class="abs" id="hw-neo" width="1060" height="440" style="left:740px; top:350px; opacity:0"></svg>
+    <div class="abs" id="hw-neochips" style="left:740px; top:800px; display:flex; gap:18px; opacity:0">
+      <span class="chip">198 000 points</span><span class="chip">682 000 liens</span><span class="chip">Neo4j + Graph Data Science</span>
+    </div>
+
+    <svg class="abs" id="hw-gnn" width="1060" height="470" style="left:740px; top:350px; opacity:0"></svg>
+    <div class="abs" id="hw-gnnlab" style="left:740px; top:830px; font-size:30px; color:var(--ink2); opacity:0">Chaque client est jugé avec ce que font ses voisins.</div>
   </section>
+<style>
+  .stp { box-sizing: border-box; padding: 18px 24px; border-radius: 16px; background: var(--card); border: 2px solid var(--line); display: flex; gap: 20px; align-items: center; opacity: 0.25; }
+  .stp .nb { width: 52px; height: 52px; border-radius: 14px; background: #1b2a36; color: var(--muted); font: 700 26px/52px 'IBM Plex Mono', monospace; text-align: center; flex: none; }
+  .stp h3 { margin: 0; font-size: 30px; font-weight: 700; }
+  .stp p { margin: 4px 0 0; font-size: 23px; color: var(--ink2); }
+  .tk { display: flex; align-items: center; gap: 26px; margin-bottom: 26px; opacity: 0; }
+  .tk .v { box-sizing: border-box; width: 420px; padding: 16px 22px; border-radius: 14px; background: var(--card); border: 2px solid var(--line); font-size: 30px; }
+  .tk .ar { font-size: 36px; color: var(--orange); }
+  .tk .c { box-sizing: border-box; width: 380px; padding: 16px 22px; border-radius: 14px; background: rgba(79,209,197,0.10); border: 2px solid var(--teal); font-size: 30px; color: var(--teal); }
+</style>
 
   <!-- ============ DÉMO ============ -->
   <section class="scene" id="sc-demo">
     <div class="abs" id="dm-win">
-      <div id="dm-title"><b style="background:#f2667a"></b><b style="background:#e8b04a"></b><b style="background:#5dcb8c"></b><span style="margin-left:12px">Neo4j Browser · capture réelle du projet</span></div>
+      <div id="dm-title"><b style="background:#f2667a"></b><b style="background:#e8b04a"></b><b style="background:#5dcb8c"></b><span id="dm-name" style="margin-left:12px">Neo4j Browser · capture réelle du projet</span></div>
       <div id="dm-view">
-        <img id="dm-img1" src="../../docs/media/neo4j_ring.png" width="1925" height="901" alt="">
-        <img id="dm-img2" src="../../docs/media/neo4j_nid.png" width="1925" height="901" alt="" style="opacity:0">
+        <img id="dm-img0" src="../../docs/media/neo4j_ring.png" width="1925" height="901" alt="">
+        <img id="dm-img1" src="../../docs/media/neo4j_nid.png" width="1925" height="901" alt="" style="opacity:0">
+        <img id="dm-img2" src="../../docs/media/dossier.png" width="1925" height="901" alt="" style="opacity:0">
         <div id="dm-hl"></div>
         <div id="dm-hl2"></div>
         <div id="dm-ring"></div>
         <div id="dm-ripple"></div>
         <svg id="dm-cursor" viewBox="0 0 24 24"><path d="M3 2 L3 20 L8 15 L11.5 22 L14.5 20.6 L11 13.8 L18 13.8 Z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>
-        <div class="callout" id="dm-co1">Comptes hôtes : <b>33 inscriptions</b> comme utilisateurs autorisés</div>
-        <div class="callout" id="dm-co2">1 numéro d'identité → <b>6 identités</b></div>
-        <div class="callout t" id="dm-co3">Uniquement des codes, jamais les vraies données</div>
-        <div class="abs chip" id="dm-chip" style="background:#101820; color:#fff; border-color:var(--orange)">35 clients reliés entre eux</div>
+        <div class="callout" id="dm-co0">Comptes hôtes : <b>33 inscriptions</b> pour gonfler l'historique de crédit</div>
+        <div class="callout" id="dm-co1">1 numéro d'identité → <b>6 identités différentes</b></div>
+        <div class="callout t" id="dm-co2">Uniquement des codes, jamais les vraies données</div>
+        <div class="callout" id="dm-co3">Les raisons de l'alerte, écrites en clair pour l'enquêteur</div>
+        <div class="abs chip" id="dm-chip" style="left:24px; top:20px; background:#101820; color:#fff; border-color:var(--orange); opacity:0">35 clients reliés entre eux</div>
       </div>
     </div>
   </section>
 
-  <!-- ============ COOPÉRATION ============ -->
+  <!-- ============ COOPÉRATION ENTRE BANQUES ============ -->
   <section class="scene" id="sc-coop">
     <div class="head" id="cp-h0">Plusieurs banques, aucun partage</div>
     <div class="head" id="cp-h1">Des codes communs</div>
-    <div class="head" id="cp-h2">Des compteurs chiffrés</div>
-    <svg id="cp-svg" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
-    <div class="data" id="cp-d0" style="top:357px">06 12 34 56 78</div>
-    <div class="data" id="cp-d1" style="top:537px">07 98 76 54 32</div>
-    <div class="data" id="cp-d2" style="top:717px">06 55 44 33 22</div>
-    <div class="abs" id="cp-res">Résultat pour la banque A (exemple) : <b>ce téléphone est utilisé ailleurs sous un autre nom</b></div>
-    <div class="abs" id="cp-big">
-      <div class="serif" style="font-size:260px; font-weight:700; line-height:1; color:var(--teal)">0</div>
-      <div style="font-size:46px; font-weight:600; margin-top:10px">donnée personnelle échangée entre les banques</div>
-      <div style="display:flex; gap:18px; justify-content:center; margin-top:36px">
-        <span class="chip">Sécurité 128 bits</span><span class="chip">Totaux exacts</span><span class="chip">Attaque par dictionnaire : 0 %</span>
-      </div>
+    <div class="head" id="cp-h2">Une urne scellée</div>
+    <div class="head" id="cp-h3">Juste l'essentiel</div>
+    <svg class="full" id="cp-svg" width="1920" height="1080"></svg>
+    <div class="dt" id="cp-d0" style="top:346px">06 12 34 56 78</div>
+    <div class="dt" id="cp-d1" style="top:546px">07 98 76 54 32</div>
+    <div class="dt" id="cp-d2" style="top:746px">06 12 34 56 78</div>
+    <div class="mt" id="cp-m0" style="top:362px">même code</div>
+    <div class="mt" id="cp-m1" style="top:762px">même code</div>
+    <div class="abs card" id="cp-res" style="left:1420px; top:400px; width:400px; padding:26px 30px; border-color:var(--teal); opacity:0">
+      <div class="kick">La banque A apprend</div>
+      <div style="font-size:28px; line-height:1.32; margin-top:14px; color:var(--ink)">Ce téléphone est utilisé <b>ailleurs</b>, sous un <b>autre nom</b>.</div>
+    </div>
+    <div class="abs" id="cp-zero" style="left:1420px; top:660px; width:400px; box-sizing:border-box; padding:22px 26px; border-radius:18px; background:rgba(79,209,197,0.10); border:2px solid var(--teal); opacity:0">
+      <div class="serif" style="font-size:64px; font-weight:700; color:var(--teal); line-height:1">0</div>
+      <div style="font-size:26px; color:var(--ink2); margin-top:6px">donnée personnelle échangée</div>
     </div>
   </section>
+<style>
+  /* démo */
+  #dm-win { left: 240px; top: 150px; width: 1440px; border-radius: 16px; overflow: hidden; border: 2px solid var(--line); background: #fff; opacity: 0; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
+  #dm-title { height: 44px; background: #1a2530; display: flex; align-items: center; gap: 10px; padding: 0 18px; font-size: 20px; color: var(--ink2); }
+  #dm-title b { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
+  #dm-view { position: relative; width: 1440px; height: 674px; overflow: hidden; background: #f5f6f7; }
+  #dm-view img { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #dm-hl, #dm-hl2 { position: absolute; border: 5px solid var(--orange); border-radius: 14px; box-shadow: 0 0 0 9999px rgba(10,16,22,0.28); opacity: 0; }
+  #dm-hl2 { border-color: var(--teal); box-shadow: none; }
+  #dm-ring { position: absolute; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; border: 6px solid var(--orange); opacity: 0; }
+  #dm-ripple { position: absolute; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 4px solid var(--orange); opacity: 0; }
+  #dm-cursor { position: absolute; width: 44px; height: 44px; opacity: 0; }
+  .callout { position: absolute; padding: 16px 22px; border-radius: 14px; background: #101820; color: #fff; font-size: 28px; line-height: 1.3; border: 2px solid var(--orange); opacity: 0; max-width: 560px; box-shadow: 0 12px 30px rgba(0,0,0,0.35); }
+  .callout.t { border-color: var(--teal); }
+  /* coopération */
+  .dt { position: absolute; left: 400px; width: 340px; box-sizing: border-box; padding: 14px 18px; border-radius: 12px; background: var(--card); border: 2px solid var(--line); font: 500 28px/1.2 'IBM Plex Mono', Consolas, monospace; text-align: center; opacity: 0; }
+  .mt { position: absolute; left: 762px; padding: 6px 14px; border-radius: 999px; background: rgba(79,209,197,0.16); color: var(--teal); font-size: 22px; font-weight: 600; opacity: 0; }
+</style>
 
   <!-- ============ RÉSULTATS ============ -->
   <section class="scene" id="sc-results">
-    <div class="abs" id="rs-title">Anneaux rusés repérés avant le vol</div>
-    <div id="rs-grid"></div>
-    <div class="rrow" id="rs-r0" style="top:300px"><div class="lab">Règles classiques</div><div class="track"><div class="fill" style="background:var(--blue)"></div><div class="v"></div></div></div>
-    <div class="rrow" id="rs-r1" style="top:410px"><div class="lab">IA sur la fiche seule</div><div class="track"><div class="fill" style="background:var(--blue)"></div><div class="v"></div></div></div>
-    <div class="rrow" id="rs-r2" style="top:520px"><div class="lab">IA + réseau + GNN</div><div class="track"><div class="fill" style="background:var(--orange)"></div><div class="v"></div></div></div>
-    <div class="rrow" id="rs-r3" style="top:630px"><div class="lab">+ coopération chiffrée</div><div class="track"><div class="fill" style="background:var(--green)"></div><div class="v"></div></div></div>
-    <div class="abs" id="rs-kpis">
-      <div class="kpi"><div class="v" style="color:var(--teal)">≈ 95 %</div><div class="l">des anneaux repérés avant le vol</div></div>
-      <div class="kpi"><div class="v">≈ 7 mois</div><div class="l">d'avance, en médiane</div></div>
+    <div class="head" id="rs-h0" style="font-size:54px">Sur les 20 anneaux les plus rusés du test</div>
+    <div class="abs" id="rs-rows" style="left:120px; top:300px; width:1680px; display:flex; flex-direction:column; gap:36px"></div>
+    <div class="abs" id="rs-kpis" style="left:120px; top:620px; width:1090px; display:grid; grid-template-columns:repeat(2,1fr); gap:30px; opacity:0">
+      <div class="card" style="padding:28px 32px; border-color:var(--teal)"><div class="serif" style="font-size:72px; font-weight:700; line-height:1; color:var(--teal)">55<span style="font-size:40px; color:var(--muted)"> / 57</span></div><div style="font-size:27px; color:var(--ink2); margin-top:10px">anneaux repérés <b>avant</b> le vol<br><span style="font-size:22px; color:var(--muted)">sur l'ensemble du test, tous niveaux confondus</span></div></div>
+      <div class="card" style="padding:28px 32px; border-color:var(--teal)"><div class="serif" style="font-size:72px; font-weight:700; line-height:1; color:var(--teal)">≈ 7 mois</div><div style="font-size:27px; color:var(--ink2); margin-top:10px">d'avance, en médiane<br><span style="font-size:22px; color:var(--muted)">213 jours entre l'alerte et le bust-out</span></div></div>
+    </div>
+    <div class="abs card" id="rs-fp" style="left:1250px; top:620px; width:550px; padding:28px 32px; display:flex; align-items:center; gap:24px; opacity:0">
+      <div id="rs-dots" style="display:grid; grid-template-columns:repeat(10,14px); gap:5px; flex:none"></div>
+      <div><div style="font-size:27px; font-weight:600; line-height:1.28">≈ 1 client honnête sur 100 signalé par erreur</div><div style="font-size:21px; color:var(--muted); margin-top:10px">1,2 % des honnêtes alertés, contre 2,0 % avec les règles</div></div>
+    </div>
+  </section>
+
+  <!-- ============ HONNÊTETÉ ET SUITE ============ -->
+  <section class="scene" id="sc-next">
+    <div class="head" id="nx-h0">Soyons honnêtes</div>
+    <div class="head" id="nx-h1">Prochaine étape</div>
+    <div class="head" id="nx-h2">Tout est en accès libre</div>
+    <div class="abs card" id="nx-honest" style="left:120px; top:330px; width:820px; padding:32px 38px; opacity:0">
+      <div class="row" style="align-items:flex-start"><span class="ok">✓</span><span style="line-height:1.3">L'idée fonctionne <b>sur un monde simulé</b>, mesuré par 18 tests automatiques.</span></div>
+      <div class="row" style="align-items:flex-start; margin-top:22px"><span class="ok" style="background:rgba(232,121,58,0.18); color:var(--orange)">!</span><span style="line-height:1.3">Rien ne prouve encore que les mêmes chiffres tiendraient dans une vraie banque.</span></div>
+    </div>
+    <div class="abs card" id="nx-gh" style="left:1000px; top:330px; width:800px; padding:32px 38px; border-color:var(--teal); opacity:0">
+      <div style="display:flex; gap:30px; align-items:center">
+        <img id="nx-qr" width="190" height="190" alt="" style="border-radius:12px; background:#fff; padding:10px; box-sizing:border-box; flex:none">
+        <div><div class="kick">Dépôt GitHub</div><div style="font-size:30px; line-height:1.3; margin-top:12px; color:var(--ink2)">Le code, les résultats détaillés et les tests, en libre accès.</div></div>
+      </div>
+      <div class="mono" id="nx-url" style="font-size:26px; color:var(--teal); margin-top:24px">github.com/…</div>
+      <div style="display:flex; gap:14px; margin-top:22px">
+        <span class="chip" style="font-size:24px; padding:9px 18px">Licence MIT</span>
+        <span class="chip" style="font-size:24px; padding:9px 18px">18 tests</span>
+        <span class="chip" style="font-size:24px; padding:9px 18px">Python · Neo4j · PyTorch</span>
+      </div>
+    </div>
+    <div class="abs" id="nx-road" style="left:120px; top:740px; width:1680px; display:flex; align-items:center; gap:24px; opacity:0">
+      <div class="rd done">Monde simulé<span>fait</span></div>
+      <div class="rdar">→</div>
+      <div class="rd now">Données réelles anonymisées<span>prochaine étape</span></div>
+      <div class="rdar">→</div>
+      <div class="rd">Pilote avec de vraies banques<span>plus tard</span></div>
     </div>
   </section>
 
   <!-- ============ FIN ============ -->
   <section class="scene" id="sc-outro">
-    <div class="abs" id="ou-badges">
-      <div class="badge" id="ou-b0">Données 100 % simulées</div>
-      <div class="badge" id="ou-b1">18 tests automatiques</div>
-      <div class="badge" id="ou-b2">Prochaine étape : données réelles</div>
-    </div>
-    <div class="abs" id="ou-final">
+    <svg class="full" id="ou-svg" width="1920" height="1080"></svg>
+    <div class="abs" id="ou-final" style="left:0; right:0; top:230px; text-align:center; opacity:0">
       <div class="kick">Preuve de concept · détection de fraude</div>
-      <div class="serif" style="font-size:150px; font-weight:700; line-height:1.05; margin-top:26px">SynthID-Graph</div>
-      <div style="font-size:48px; color:var(--ink2); margin-top:26px">Seul, un fraudeur rusé est invisible.<br><span style="color:var(--teal)">Son réseau, lui, le trahit.</span></div>
-      <div style="display:flex; gap:16px; justify-content:center; margin-top:48px">
-        <span class="chip">Python</span><span class="chip">Neo4j</span><span class="chip">PyTorch Geometric</span><span class="chip">LightGBM</span><span class="chip">OPRF · Paillier</span>
+      <div class="serif" style="font-size:146px; font-weight:700; line-height:1.05; margin-top:22px">SynthID-Graph</div>
+      <div style="font-size:46px; color:var(--ink2); margin-top:24px; line-height:1.35">Seul, un fraudeur rusé est invisible.<br><span style="color:var(--teal)">Son réseau, lui, le trahit.</span></div>
+      <div style="display:flex; justify-content:center; align-items:center; gap:28px; margin-top:52px">
+        <img id="ou-qr" width="160" height="160" alt="" style="border-radius:14px; background:#fff; padding:10px; box-sizing:border-box">
+        <div style="text-align:left"><div style="font-size:24px; color:var(--muted); letter-spacing:2px; text-transform:uppercase">Code et résultats</div><div class="mono" id="ou-url" style="font-size:30px; color:var(--teal); margin-top:8px">github.com/…</div></div>
       </div>
     </div>
   </section>
+<style>
+  .rw { display: flex; align-items: center; gap: 24px; opacity: 0; }
+  .rw .lab { box-sizing: border-box; width: 460px; text-align: right; font-size: 31px; color: var(--ink); }
+  .rw .ic { display: grid; grid-template-columns: repeat(20, 42px); gap: 9px; }
+  .rw .ic div { width: 42px; height: 42px; border-radius: 50%; border: 3px dashed #35485a; box-sizing: border-box; }
+  .rw .val { width: 130px; font: 700 38px/1 'IBM Plex Sans', sans-serif; white-space: nowrap; }
+  .rd { position: relative; box-sizing: border-box; flex: 1; padding: 20px 26px; border-radius: 16px; background: var(--card); border: 2px solid var(--line); font-size: 28px; font-weight: 600; color: var(--ink2); }
+  .rd span { display: block; margin-top: 6px; font-size: 22px; font-weight: 500; color: var(--muted); }
+  .rd.done { border-color: var(--teal); color: var(--ink); }
+  .rd.now { border-color: var(--orange); color: var(--ink); }
+  .rdar { font-size: 34px; color: var(--muted); }
+</style>
 
+<!--SCENES-->
+
+  <div id="defbox"><div class="dk"><span>Définition</span><span id="def-n"></span></div><div class="dt" id="def-t"></div><div class="dx" id="def-x"></div></div>
   <div id="caption"></div>
 </div>
 
 <script>
-const TL = window.TIMELINE || {scenes: [], captions: [], total: 10};
+const TL = window.TIMELINE || {scenes: [], captions: [], defs: [], total: 10};
+const ASSETS = window.ASSETS || {qr: '', url: 'github.com/asaphfelix03-beep/synthid-graph'};
 const $ = id => document.getElementById(id);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const lerp = (a, b, p) => a + (b - a) * p;
 const eo = p => 1 - Math.pow(1 - p, 3);
 const eio = p => p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const back = p => { const c = 1.7; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
 const pr = (t, a, d) => d <= 0 ? (t >= a ? 1 : 0) : clamp((t - a) / d);
+const pulse = (t, a, d) => { const p = pr(t, a, d); return p > 0 && p < 1 ? Math.sin(Math.PI * p) : 0; };
 function set(el, o, dy = 0, sc = 1, extra = '') { el.style.opacity = o; el.style.transform = `translateY(${dy}px) scale(${sc}) ${extra}`; }
 function inout(t, a, b, f = 0.35) { return Math.min(pr(t, a, f), 1 - pr(t, b - f, f)); }
-function heads(prefix, n, lt, S) {
-  for (let k = 0; k < n; k++) {
-    const a = S.cues[k][0] - 0.15, b = (k + 1 < n ? S.cues[k + 1][0] - 0.1 : S.dur);
-    const o = inout(lt, a, b, 0.35);
-    set($(prefix + k), o, (1 - eo(pr(lt, a, 0.5))) * 24);
-  }
+function pop(el, t, a, d = 0.45, dy = 20) { const p = eo(pr(t, a, d)); set(el, p, (1 - p) * dy); return p; }
+const fr = n => Math.round(n).toLocaleString('fr-FR').replace(/ | /g, ' ');
+/* titres : le titre k s'affiche à partir du début de la phrase at[k] (par défaut, une phrase par titre) */
+function heads(prefix, lt, S, at) {
+  at = at || S.cues.map((_, k) => k);
+  at.forEach((ci, k) => {
+    const a = S.cues[ci][0] - 0.15, b = k + 1 < at.length ? S.cues[at[k + 1]][0] - 0.1 : S.dur;
+    set($(prefix + k), inout(lt, a, b, 0.35), (1 - eo(pr(lt, a, 0.5))) * 24);
+  });
 }
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function txt(parent, x, y, s, size, fill, weight = 600, anchor = 'middle') {
+  const t = el('text', {x, y, 'text-anchor': anchor, 'font-size': size, 'font-weight': weight, fill, 'font-family': 'IBM Plex Sans'}, parent); t.textContent = s; return t;
+}
+/* pictogramme de personne dans un disque */
+function person(parent, x, y, r, fill) {
+  const g = el('g', {transform: `translate(${x},${y})`, opacity: 0}, parent);
+  const c = el('circle', {r, fill, stroke: '#0b1117', 'stroke-width': 5}, g);
+  el('circle', {cx: 0, cy: -r * 0.24, r: r * 0.3, fill: '#0b1117', opacity: 0.55}, g);
+  el('path', {d: `M${-r * 0.52} ${r * 0.56} Q0 ${-r * 0.12} ${r * 0.52} ${r * 0.56} Z`, fill: '#0b1117', opacity: 0.55}, g);
+  g._c = c; g._x = x; g._y = y; return g;
+}
+function place(g, x, y, s = 1) { g.setAttribute('transform', `translate(${x},${y}) scale(${s})`); }
+function drawLine(line, p) { line.setAttribute('stroke-dashoffset', line._L * (1 - p)); }
+function mkLine(parent, x1, y1, x2, y2, stroke, w = 4, extra = {}) {
+  const L = Math.hypot(x2 - x1, y2 - y1);
+  const e = el('line', Object.assign({x1, y1, x2, y2, stroke, 'stroke-width': w, 'stroke-linecap': 'round', 'stroke-dasharray': L, 'stroke-dashoffset': L}, extra), parent);
+  e._L = L; return e;
+}
+const R = {};
+</script>
+<script>
+/* ---------- accroche : réseau qui dérive + silhouette fantôme ---------- */
+(function () {
+  const svg = $('in-svg');
+  let seed = 7; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const nodes = [];
+  for (let i = 0; i < 56; i++) nodes.push({x: 40 + rnd() * 1840, y: 40 + rnd() * 1000, ph: rnd() * 6.28, r: 3 + rnd() * 4});
+  const edges = [];
+  for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+    if (Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y) < 200 && edges.length < 110) edges.push([i, j]);
+  }
+  const eEls = edges.map(() => el('line', {stroke: '#4fd1c5', 'stroke-width': 1.6, opacity: 0.14}, svg));
+  const nEls = nodes.map(n => el('circle', {r: n.r, fill: '#4fd1c5', opacity: 0.3}, svg));
+  const gh = el('g', {opacity: 0}, svg);
+  el('circle', {r: 132, fill: 'rgba(232,121,58,0.05)', stroke: '#e8793a', 'stroke-width': 5, 'stroke-dasharray': '20 16'}, gh);
+  el('circle', {cx: 0, cy: -34, r: 40, fill: 'none', stroke: '#e8793a', 'stroke-width': 5, 'stroke-dasharray': '14 12'}, gh);
+  el('path', {d: 'M-72 74 Q0 -16 72 74', fill: 'none', stroke: '#e8793a', 'stroke-width': 5, 'stroke-dasharray': '14 12'}, gh);
+  const badge = el('g', {transform: 'translate(104,100)'}, gh);
+  el('circle', {r: 44, fill: '#e8793a'}, badge);
+  txt(badge, 0, 17, '?', 52, '#0b1117', 700);
+  R.intro = function (lt, S) {
+    const c0 = S.cues[0];
+    nodes.forEach((n, i) => {
+      n.cx = n.x + Math.sin(lt * 0.5 + n.ph) * 16; n.cy = n.y + Math.cos(lt * 0.4 + n.ph) * 13;
+      nEls[i].setAttribute('cx', n.cx); nEls[i].setAttribute('cy', n.cy);
+    });
+    edges.forEach(([i, j], k) => {
+      const e = eEls[k]; e.setAttribute('x1', nodes[i].cx); e.setAttribute('y1', nodes[i].cy);
+      e.setAttribute('x2', nodes[j].cx); e.setAttribute('y2', nodes[j].cy);
+    });
+    const p = eo(pr(lt, 0.15, 1.0));
+    gh.setAttribute('opacity', p);
+    place(gh, 960, 400, lerp(0.8, 1, p) + 0.012 * Math.sin(lt * 1.4));
+    gh.querySelector('circle').setAttribute('stroke-dashoffset', -lt * 26);
+    pop($('in-q0'), lt, c0[0] - 0.15, 0.7, 26);
+    pop($('in-q1'), lt, c0[0] + (c0[1] - c0[0]) * 0.52, 0.6, 26);
+  };
+})();
 
-/* ---------- chapitres ---------- */
+/* ---------- contexte : la confiance se construit ---------- */
+(function () {
+  const svg = $('tr-svg'), X0 = 150, DX = 66, Y0 = 330, VMAX = 5000;
+  const PLAF = [500, 500, 500, 1500, 1500, 1500, 3000, 3000, 3000, 5000, 5000, 5000];
+  const yv = v => Y0 - (v / VMAX) * 250;
+  el('line', {x1: 140, y1: Y0, x2: 930, y2: Y0, stroke: '#243441', 'stroke-width': 3}, svg);
+  [500, 5000].forEach(v => txt(svg, 130, yv(v) + 9, fr(v) + ' €', 24, '#8596a6', 500, 'end'));
+  txt(svg, 0, 26, 'Remboursements à l\'heure, mois après mois', 26, '#8596a6', 500, 'start');
+  let d = `M ${X0} ${yv(PLAF[0])}`;
+  for (let k = 1; k < 12; k++) d += ` L ${X0 + k * DX} ${yv(PLAF[k - 1])} L ${X0 + k * DX} ${yv(PLAF[k])}`;
+  const path = el('path', {d, fill: 'none', stroke: '#4fd1c5', 'stroke-width': 6, 'stroke-linejoin': 'round'}, svg);
+  const LEN = path.getTotalLength ? 3000 : 3000;
+  path.setAttribute('stroke-dasharray', LEN); path.setAttribute('stroke-dashoffset', LEN);
+  const checks = [];
+  for (let k = 0; k < 12; k++) {
+    const g = el('g', {transform: `translate(${X0 + k * DX},372)`, opacity: 0}, svg);
+    el('circle', {r: 16, fill: 'rgba(79,209,197,0.18)', stroke: '#4fd1c5', 'stroke-width': 2}, g);
+    txt(g, 0, 8, '✓', 20, '#4fd1c5', 700);
+    checks.push(g);
+  }
+  txt(svg, X0, 418, 'Mois 1', 24, '#8596a6', 500);
+  txt(svg, X0 + 11 * DX, 418, 'Mois 12', 24, '#8596a6', 500);
+  R.trust = function (lt, S) {
+    const [c0, c1, c2] = S.cues;
+    const pc = eo(pr(lt, 0.05, 0.6)); set($('tr-card'), pc, (1 - pc) * 26);
+    for (let k = 0; k < 3; k++) { const p = eo(pr(lt, c0[0] + 0.6 + k * 0.8, 0.4)); set($('tr-r' + k), p, 0, 1, `translateX(${(1 - p) * -18}px)`); }
+    const dim = 1 - 0.75 * pr(lt, c2[0], 0.5);
+    set(svg, eo(pr(lt, c1[0] - 0.2, 0.5)) * dim);
+    const g = eio(pr(lt, c1[0] + 0.1, Math.max(1.5, (c1[1] - c1[0]) * 0.9)));
+    path.setAttribute('stroke-dashoffset', LEN * (1 - g));
+    checks.forEach((c, k) => c.setAttribute('opacity', eo(pr(g, (k + 0.3) / 12, 0.03))));
+    const v = PLAF[Math.min(11, Math.floor(g * 12))];
+    $('tr-amount').textContent = fr(g > 0 ? v : 500) + ' €';
+    $('tr-amount').style.transform = `scale(${1 + 0.07 * pulse(g * 12 % 1, 0, 0.35)})`;
+    $('tr-amount').style.transformOrigin = 'left center';
+    pop($('tr-final'), lt, c2[0] + 0.2, 0.6, 26);
+    heads('tr-h', lt, S);
+  };
+})();
+
+/* ---------- le problème : l'identité synthétique ---------- */
+(function () {
+  const svg = $('sy-svg');
+  const fraud = person(svg, 250, 790, 52, '#3d4f5e');
+  el('path', {d: 'M-58 -18 A58 58 0 0 1 58 -18', fill: 'none', stroke: '#26333f', 'stroke-width': 16, 'stroke-linecap': 'round'}, fraud);
+  const fraudLab = txt(svg, 330, 802, 'Le fraudeur', 30, '#8596a6', 600, 'start'); fraudLab.setAttribute('opacity', 0);
+  const arrow = el('g', {opacity: 0}, svg);
+  el('path', {d: 'M 820 520 C 890 470, 930 470, 986 512', fill: 'none', stroke: '#e8793a', 'stroke-width': 6, 'stroke-linecap': 'round'}, arrow);
+  el('path', {d: 'M 986 512 L 962 490 L 958 522 Z', fill: '#e8793a'}, arrow);
+  const TARG = [168, -36, 14, -38];
+  R.synth = function (lt, S) {
+    const [c0, c1, c2] = S.cues;
+    const pf = eo(pr(lt, c0[0] + 0.3, 0.6));
+    fraud.setAttribute('opacity', pf); place(fraud, 250, 790, lerp(0.7, 1, pf));
+    fraudLab.setAttribute('opacity', eo(pr(lt, c0[0] + 0.7, 0.5)));
+    const merge = eio(pr(lt, c2[0] - 0.1, 1.1));
+    for (let k = 0; k < 4; k++) {
+      const app = eo(pr(lt, c1[0] + 0.1 + k * (k ? 1.5 : 0) + (k > 1 ? (k - 1) * 0.4 : 0), 0.5));
+      const e = $('sy-p' + k);
+      e.style.opacity = app * (1 - merge);
+      e.style.transform = `translate(${merge * 880}px, ${merge * TARG[k]}px) scale(${lerp(1, 0.68, merge)})`;
+    }
+    arrow.setAttribute('opacity', eo(pr(lt, c2[0] - 0.2, 0.4)) * (1 - pr(lt, c2[0] + 1.6, 0.5)));
+    pop($('sy-card'), lt, c2[0] - 0.2, 0.6, 20);
+    for (let k = 0; k < 4; k++) $('sy-f' + k).style.opacity = eo(pr(lt, c2[0] + 0.5 + k * 0.28, 0.4));
+    const st = eo(pr(lt, c2[0] + 1.5, 0.35));
+    $('sy-stamp').style.opacity = st;
+    $('sy-stamp').style.transform = `rotate(-8deg) scale(${lerp(1.5, 1, st)})`;
+    heads('sy-h', lt, S);
+  };
+})();
+</script>
+<script>
+/* ---------- le bust-out ---------- */
+(function () {
+  const svg = $('bu-svg'), X = 40, W = 940, px = f => X + f * W;
+  el('rect', {x: px(0), y: 150, width: W * 0.08, height: 30, rx: 8, fill: '#3a4d5e'}, svg);
+  el('rect', {x: px(0.10), y: 150, width: W * 0.66, height: 30, rx: 8, fill: '#4fd1c5'}, svg);
+  el('rect', {x: px(0.78), y: 150, width: W * 0.22, height: 30, rx: 8, fill: '#f2667a'}, svg);
+  txt(svg, px(0.10), 290, 'Culture', 26, '#4fd1c5', 600, 'start');
+  txt(svg, px(0.10), 322, '6 à 20 mois de client parfait', 22, '#8596a6', 500, 'start');
+  txt(svg, px(1), 290, 'Bust-out', 26, '#f2667a', 600, 'end');
+  txt(svg, px(1), 322, 'quelques jours', 22, '#8596a6', 500, 'end');
+  const ticks = [];
+  for (let k = 0; k < 14; k++) {
+    const g = el('g', {transform: `translate(${px(0.12 + k * 0.046)},228)`, opacity: 0}, svg);
+    el('circle', {r: 13, fill: 'rgba(79,209,197,0.16)', stroke: '#4fd1c5', 'stroke-width': 2}, g);
+    txt(g, 0, 7, '✓', 15, '#4fd1c5', 700); ticks.push(g);
+  }
+  const mk = el('g', {opacity: 0}, svg);
+  el('circle', {r: 22, fill: '#fff'}, mk);
+  const mo = txt(svg, px(0), 102, 'Mois 1', 30, '#eef3f6', 600); mo.setAttribute('opacity', 0);
+  const PLAF = [500, 1500, 4000, 8000];
+  R.bust = function (lt, S) {
+    const [c0, c1, c2, c3] = S.cues;
+    const pc = eo(pr(lt, 0.05, 0.6)); set($('bu-card'), pc, (1 - pc) * 26);
+    const p1 = eio(pr(lt, c0[0] + 0.3, Math.max(1.5, (c0[1] - c0[0]) * 0.85)));
+    const p2 = eio(pr(lt, c1[0], Math.max(1.2, (c1[1] - c1[0]) * 0.9)));
+    const p3 = eio(pr(lt, c2[0] + 0.5, 1.5));
+    const pos = 0.10 + 0.40 * p1 + 0.28 * p2 + 0.22 * p3;
+    mk.setAttribute('opacity', pc); place(mk, px(pos), 165);
+    const month = Math.max(1, Math.round((pos - 0.10) / 0.68 * 14));
+    mo.setAttribute('opacity', pc); mo.setAttribute('x', clamp(px(pos), 90, 930)); mo.textContent = 'Mois ' + month;
+    $('bu-months').textContent = month + (month > 1 ? ' mois' : ' mois');
+    const done = Math.round(clamp((pos - 0.12) / 0.60) * 14);
+    ticks.forEach((g, k) => g.setAttribute('opacity', k < done ? 1 : 0));
+    $('bu-payn').textContent = done;
+    $('bu-plaf').textContent = fr(PLAF[Math.min(3, Math.floor(p2 * 3.999))]) + ' €';
+    $('bu-plaf').style.transform = `scale(${1 + 0.08 * pulse(p2 * 3 % 1, 0, 0.3)})`;
+    $('bu-plaf').style.transformOrigin = 'left center';
+    const used = $('bu-used');
+    used.style.width = lerp(16 + 6 * Math.sin(lt * 2.2), 100, p3) + '%';
+    used.style.background = p3 > 0.25 ? 'var(--red)' : 'var(--teal)';
+    $('bu-card').style.borderColor = p3 > 0.5 ? '#f2667a' : '#243441';
+    $('bu-face').style.borderColor = p3 > 0.5 ? '#f2667a' : '#e8793a';
+    $('bu-face').style.color = p3 > 0.5 ? '#f2667a' : '#e8793a';
+    $('bu-pay').style.opacity = 1 - 0.7 * pr(lt, c2[0] + 1.2, 0.6);
+    const st = eo(pr(lt, c3[0] + 0.2, 0.35));
+    $('bu-stamp').style.opacity = st;
+    $('bu-stamp').style.transform = `rotate(-11deg) scale(${lerp(1.6, 1, st)})`;
+    pop($('bu-loss'), lt, c3[0] + 0.6, 0.5, 18);
+    heads('bu-h', lt, S);
+  };
+})();
+
+/* ---------- l'anneau ---------- */
+(function () {
+  const NAMES = ['L. Martin', 'A. Diallo', 'S. Kouassi', 'M. Leroy', 'C. Dubois', 'T. Nguyen', 'F. Bernard', 'J. Moreau',
+    'K. Traoré', 'P. Simon', 'R. Lopez', 'N. Faure', 'E. Robin', 'D. Marchand', 'H. Perrin', 'V. Roussel',
+    'B. Girard', 'O. Mercier', 'G. Noël', 'I. Blanc', 'Y. Adam', 'Q. Vidal', 'U. Pons', 'W. Legrand'];
+  const grid = $('rg-grid');
+  NAMES.forEach(n => { const d = document.createElement('div'); d.className = 'mini'; d.innerHTML = `<div class="a"></div><div class="n">${n}</div>`; grid.appendChild(d); });
+  const cells = Array.from(grid.children);
+  const svg = $('rg-svg'), FX = 1520, FY = 600;
+  const lines = cells.map((c, k) => mkLine(svg, 140 + (k % 6) * 187 + 82, 320 + ((k / 6) | 0) * 140 + 59, FX - 66, FY, '#e8793a', 3, {opacity: 0.45}));
+  const fraud = person(svg, FX, FY, 62, '#3d4f5e');
+  el('path', {d: 'M-70 -22 A70 70 0 0 1 70 -22', fill: 'none', stroke: '#26333f', 'stroke-width': 18, 'stroke-linecap': 'round'}, fraud);
+  const lab = txt(svg, FX, FY + 110, 'Le même fraudeur', 30, '#b9c6d2', 600); lab.setAttribute('opacity', 0);
+  const lab2 = txt(svg, FX, FY + 156, '24 fausses identités', 28, '#e8793a', 700); lab2.setAttribute('opacity', 0);
+  R.ring = function (lt, S) {
+    const [c0, c1] = S.cues;
+    const on = eo(pr(lt, c1[0] + 0.2, 0.6));
+    cells.forEach((c, k) => {
+      const p = eo(pr(lt, c0[0] + (k ? 0.6 + k * 0.075 : 0), 0.45));
+      set(c, p, 0, lerp(0.55, 1, p));
+      c.style.borderColor = (k === 0 || on > 0.5) ? '#e8793a' : '#243441';
+    });
+    const pf = eo(pr(lt, c1[0] - 0.2, 0.6));
+    fraud.setAttribute('opacity', pf); place(fraud, FX, FY, lerp(0.6, 1, pf));
+    lines.forEach((l, k) => drawLine(l, eio(pr(lt, c1[0] + 0.1 + k * 0.03, 0.5))));
+    lab.setAttribute('opacity', eo(pr(lt, c1[0] + 0.5, 0.5)));
+    lab2.setAttribute('opacity', eo(pr(lt, c1[0] + 1.0, 0.5)));
+    heads('rg-h', lt, S);
+  };
+})();
+</script>
+<script>
+/* ---------- le piège : quatre clients, lesquels sont faux ? ---------- */
+(function () {
+  const PEOPLE = [['L. Martin', '32 ans · Lyon', 14, '2 300'], ['A. Diallo', '29 ans · Lyon', 11, '2 050'],
+    ['S. Kouassi', '35 ans · Villeurbanne', 16, '2 480'], ['M. Petit', '41 ans · Lyon', 23, '2 150']];
+  const cards = PEOPLE.map(([n, sb, mo, rev]) => {
+    const d = document.createElement('div'); d.className = 'qc';
+    d.innerHTML = `<div class="top"><div class="avatar" style="width:66px; height:66px; font-size:26px">${n[0] + n.split(' ')[1][0]}</div>
+      <div><div class="nm">${n}</div><div class="sb">${sb}</div></div></div>
+      <div class="li"><i>✓</i>Client depuis ${mo} mois</div>
+      <div class="li"><i>✓</i>Paie toujours à l'heure</div>
+      <div class="li"><i>✓</i>Emploi déclaré</div>
+      <div class="li"><i>✓</i>Revenu : ${rev} €/mois</div>
+      <div class="risk">Risque : faible</div><div class="qm">?</div>`;
+    $('qz-cards').appendChild(d); return d;
+  });
+  const icons = [];
+  for (let k = 0; k < 20; k++) { const d = document.createElement('div'); d.className = 'ri'; $('qz-icons').appendChild(d); icons.push(d); }
+  const tsvg = $('qz-timer'), C = 2 * Math.PI * 66;
+  el('circle', {cx: 80, cy: 80, r: 66, fill: 'rgba(18,28,37,0.92)', stroke: '#243441', 'stroke-width': 6}, tsvg);
+  const arc = el('circle', {cx: 80, cy: 80, r: 66, fill: 'none', stroke: '#e8793a', 'stroke-width': 8, 'stroke-linecap': 'round',
+    'stroke-dasharray': C, 'stroke-dashoffset': 0, transform: 'rotate(-90 80 80)'}, tsvg);
+  const tnum = txt(tsvg, 80, 99, '5', 56, '#eef3f6', 700);
+  R.quiz = function (lt, S) {
+    const [c0, c1, c2] = S.cues;
+    const out = 1 - pr(lt, c2[0], 0.5);
+    cards.forEach((c, k) => {
+      const p = eo(pr(lt, c0[0] - 0.1 + k * 0.28, 0.5));
+      set(c, p * out, (1 - p) * 22, lerp(0.94, 1, p));
+      c.querySelector('.qm').style.opacity = eo(pr(lt, c1[0] + 0.15 + k * 0.2, 0.4)) * (1 - pr(lt, c2[0], 0.4));
+    });
+    const tp = pr(lt, c0[0] + 0.9, 4.5);
+    $('qz-timer').style.opacity = Math.min(eo(pr(lt, c0[0] + 0.7, 0.4)), 1 - pr(lt, c1[0] + 0.4, 0.5));
+    arc.setAttribute('stroke-dashoffset', C * tp);
+    tnum.textContent = Math.max(0, Math.ceil(5 * (1 - tp)));
+    pop($('qz-rules'), lt, c2[0] + 0.3, 0.6, 26);
+    icons.forEach((d, k) => d.classList.toggle('hit', k < 3 && lt > c2[0] + 1.2 + k * 0.3));
+    heads('qz-h', lt, S);
+  };
+})();
+
+/* ---------- l'idée : le graphe ---------- */
+(function () {
+  const svg = $('gp-svg');
+  function pill(x, y, label, w) {
+    const g = el('g', {transform: `translate(${x},${y})`, opacity: 0}, svg);
+    const r = el('rect', {x: -w / 2, y: -34, width: w, height: 68, rx: 34, fill: '#12303a', stroke: '#4fd1c5', 'stroke-width': 4}, g);
+    txt(g, 0, 10, label, 26, '#eef3f6', 600);
+    const b = el('g', {transform: `translate(${w / 2 - 6},-30)`, opacity: 0}, g);
+    el('circle', {r: 25, fill: '#e8793a'}, b); txt(b, 0, 9, '', 22, '#0b1117', 700);
+    g._r = r; g._b = b; g._bt = b.querySelector('text'); g._x = x; g._y = y; return g;
+  }
+  const P = {M: [280, 430], D: [280, 760], K: [880, 700], P: [1300, 430], F1: [1300, 780], F2: [1700, 780]};
+  const fakes = ['M', 'D', 'K'];
+  const nodes = {};
+  ['M', 'D', 'K', 'P'].forEach(k => { nodes[k] = person(svg, P[k][0], P[k][1], 48, '#6f8599'); });
+  ['F1', 'F2'].forEach(k => { nodes[k] = person(svg, P[k][0], P[k][1], 38, '#4a5a69'); });
+  const NAMES = {M: 'L. Martin', D: 'A. Diallo', K: 'S. Kouassi', P: 'M. Petit', F1: 'Sa mère', F2: 'Son frère'};
+  const labels = {};
+  Object.keys(P).forEach(k => {
+    const r = k[0] === 'F' ? 38 : 48;
+    labels[k] = txt(svg, P[k][0], P[k][1] + r + 36, NAMES[k], k[0] === 'F' ? 26 : 30, '#b9c6d2', 600);
+    labels[k].setAttribute('opacity', 0);
+  });
+  const T = pill(280, 595, 'Téléphone', 240), E = pill(620, 460, 'Employeur · Nova Conseil', 420), A = pill(620, 790, 'Appareil', 230);
+  const TP = pill(1120, 385, 'Téléphone', 240), H = pill(1560, 620, 'Adresse · 12 rue des Lilas', 440);
+  const EDGES = [['M', T], ['D', T], ['M', E], ['D', E], ['K', E], ['D', A], ['K', A], ['P', TP], ['P', H], ['F1', H], ['F2', H]];
+  const lines = EDGES.map(([n, p]) => mkLine(svg, P[n][0], P[n][1], p._x, p._y, '#4fd1c5', 4, {opacity: 0.8}));
+  lines.forEach(l => svg.insertBefore(l, svg.firstChild));  // les liens passent derrière les nœuds
+  const halo = el('ellipse', {cx: 560, cy: 600, rx: 500, ry: 290, fill: 'rgba(232,121,58,0.07)', stroke: '#e8793a',
+    'stroke-width': 4, 'stroke-dasharray': '16 13', opacity: 0}, svg);
+  const okLab = txt(svg, 1560, 720, 'Famille : c\'est normal ✓', 30, '#4fd1c5', 600); okLab.setAttribute('opacity', 0);
+  R.graph = function (lt, S) {
+    const [c0, c1, c2, c3] = S.cues;
+    ['M', 'D', 'K', 'P'].forEach((k, i) => {
+      const p = eo(pr(lt, c0[0] + 0.3 + i * 0.35, 0.5));
+      nodes[k].setAttribute('opacity', p); place(nodes[k], P[k][0], P[k][1], lerp(0.4, 1, p));
+      labels[k].setAttribute('opacity', p);
+    });
+    [T, E, A, TP, H].forEach((g, i) => {
+      const p = eo(pr(lt, c1[0] + 0.2 + i * 0.4, 0.45));
+      g.setAttribute('opacity', p); place(g, g._x, g._y, lerp(0.6, 1, p));
+    });
+    ['F1', 'F2'].forEach((k, i) => {
+      const p = eo(pr(lt, c1[0] + 1.6 + i * 0.35, 0.45));
+      nodes[k].setAttribute('opacity', p * 0.95); place(nodes[k], P[k][0], P[k][1], lerp(0.4, 1, p));
+      labels[k].setAttribute('opacity', p);
+    });
+    lines.forEach((l, k) => drawLine(l, eio(pr(lt, c1[0] + 0.5 + k * 0.18, 0.55))));
+    const sh = eo(pr(lt, c2[0] + 0.3, 0.6));
+    [[T, '×2', 0], [E, '×3', 0.35], [A, '×2', 0.7]].forEach(([g, n, d]) => {
+      const p = eo(pr(lt, c2[0] + 0.3 + d, 0.5));
+      g._r.setAttribute('stroke', p > 0.4 ? '#e8793a' : '#4fd1c5');
+      g._r.setAttribute('fill', p > 0.4 ? 'rgba(232,121,58,0.14)' : '#12303a');
+      g._bt.textContent = n; g._b.setAttribute('opacity', p);
+      place(g, g._x, g._y, 1 + 0.05 * pulse(lt, c2[0] + 0.3 + d, 0.6));
+    });
+    lines.forEach((l, k) => l.setAttribute('stroke', k < 7 ? (sh > 0.4 ? '#e8793a' : '#4fd1c5') : '#4fd1c5'));
+    const okp = eo(pr(lt, c2[0] + 1.8, 0.6));
+    H._r.setAttribute('stroke', '#4fd1c5'); okLab.setAttribute('opacity', okp);
+    const hp = eo(pr(lt, c3[0] + 0.1, 0.8));
+    halo.setAttribute('opacity', hp); halo.setAttribute('rx', lerp(560, 500, hp));
+    fakes.forEach(k => nodes[k]._c.setAttribute('fill', hp > 0.3 ? '#e8793a' : '#6f8599'));
+    nodes.P._c.setAttribute('fill', okp > 0.4 ? '#1faa77' : '#6f8599');
+    pop($('gp-answer'), lt, c2[0] + 2.2, 0.5, 14);
+    heads('gp-h', lt, S);
+  };
+})();
+</script>
+<script>
+/* ---------- le projet : les quatre étapes ---------- */
+(function () {
+  const STEPS = [['01', 'Un monde simulé', '3 banques · 20 684 clients · 110 anneaux'],
+    ['02', 'Données protégées', 'chaque donnée personnelle devient un code'],
+    ['03', 'Graphe Neo4j', '198 000 points · 682 000 liens'],
+    ['04', 'Modèles d\'IA', 'LightGBM + IA sur graphe (GNN)']];
+  const steps = STEPS.map(([n, t, s]) => {
+    const d = document.createElement('div'); d.className = 'stp';
+    d.innerHTML = `<div class="nb">${n}</div><div><h3>${t}</h3><p>${s}</p></div>`;
+    $('hw-steps').appendChild(d); return d;
+  });
+  /* champ de points : la population simulée, avec ses anneaux cachés */
+  const dsvg = $('hw-dots'); let seed = 23; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const COLS = 34, ROWS = 10, dots = [], ring = new Set();
+  for (let i = 0; i < 8; i++) {
+    const c = 2 + Math.floor(rnd() * (COLS - 5)), r = Math.floor(rnd() * (ROWS - 1));
+    [[0, 0], [1, 0], [0, 1], [1, 1]].forEach(([dx, dy]) => ring.add((r + dy) * COLS + c + dx));
+  }
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    dots.push(el('circle', {cx: 16 + c * 31, cy: 16 + r * 30, r: 6, fill: '#39505f', opacity: 0}, dsvg));
+  }
+  const ringLab = txt(dsvg, 0, 326, '● les 110 anneaux : on sait exactement qui ils sont', 24, '#e8793a', 600, 'start');
+  ringLab.setAttribute('opacity', 0);
+  /* mini-graphe Neo4j */
+  const nsvg = $('hw-neo'); const gn = [];
+  for (let i = 0; i < 46; i++) gn.push({x: 40 + rnd() * 980, y: 40 + rnd() * 360, r: 7 + rnd() * 9});
+  const ge = [];
+  for (let i = 0; i < gn.length; i++) for (let j = i + 1; j < gn.length; j++) {
+    if (Math.hypot(gn[i].x - gn[j].x, gn[i].y - gn[j].y) < 165 && ge.length < 90) ge.push([i, j]);
+  }
+  const geEls = ge.map(([i, j]) => mkLine(nsvg, gn[i].x, gn[i].y, gn[j].x, gn[j].y, '#2f6f75', 2.4, {opacity: 0.8}));
+  const gnEls = gn.map((n, i) => el('circle', {cx: n.x, cy: n.y, r: n.r, fill: i % 7 === 0 ? '#e8793a' : (i % 3 ? '#4fd1c5' : '#3987e5'), opacity: 0}, nsvg));
+  /* le GNN : un client jugé avec ses voisins */
+  const gsvg = $('hw-gnn'), CX = 530, CY = 190, RAD = 150;
+  const nb = [];
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 3, x = CX + Math.cos(a) * RAD * 1.6, y = CY + Math.sin(a) * RAD;
+    mkLine(gsvg, x, y, CX, CY, '#2f6f75', 3, {opacity: 0.9, 'stroke-dasharray': 'none', 'stroke-dashoffset': 0});
+    nb.push({x, y, g: person(gsvg, x, y, 34, i < 3 ? '#e8793a' : '#5d7386')});
+  }
+  const msgs = nb.map(() => el('circle', {r: 9, fill: '#4fd1c5', opacity: 0}, gsvg));
+  const center = person(gsvg, CX, CY, 58, '#6f8599');
+  const score = el('g', {transform: `translate(${CX},430)`, opacity: 0}, gsvg);
+  el('rect', {x: -190, y: -42, width: 380, height: 84, rx: 42, fill: 'rgba(232,121,58,0.16)', stroke: '#e8793a', 'stroke-width': 4}, score);
+  txt(score, 0, 14, 'Risque : 0,97 / 1', 36, '#e8793a', 700);
+  R.how = function (lt, S) {
+    const c = S.cues, ACT = [0, 0, 1, 2, 3];
+    let ci = 0; for (let k = 0; k < c.length; k++) if (lt >= c[k][0] - 0.25) ci = k;
+    steps.forEach((e, k) => {
+      const app = eo(pr(lt, 0.15 + k * 0.22, 0.5));
+      const on = k === ACT[ci] ? 1 : 0;
+      e.style.opacity = app * (on ? 1 : 0.3);
+      e.style.transform = `translateX(${(1 - app) * -20}px) scale(${on ? 1 : 0.985})`;
+      e.style.borderColor = on ? '#4fd1c5' : '#243441';
+      e.querySelector('.nb').style.color = on ? '#4fd1c5' : '#8596a6';
+    });
+    set($('hw-stats'), inout(lt, c[0][0] - 0.1, c[1][0] - 0.2, 0.4));
+    set($('hw-why'), inout(lt, c[1][0] - 0.2, c[2][0] - 0.3, 0.4));
+    const pd = inout(lt, c[0][0] + 0.5, c[2][0] - 0.3, 0.4);
+    set(dsvg, pd);
+    const gd = eo(pr(lt, c[0][0] + 0.8, 1.6)), hot = eo(pr(lt, c[1][0] + 0.8, 1.0));
+    dots.forEach((d, i) => {
+      d.setAttribute('opacity', i / dots.length < gd ? 1 : 0);
+      d.setAttribute('fill', ring.has(i) && hot > 0.4 ? '#e8793a' : '#39505f');
+      d.setAttribute('r', ring.has(i) ? lerp(6, 8.5, hot) : 6);
+    });
+    ringLab.setAttribute('opacity', hot);
+    const pt = inout(lt, c[2][0] - 0.2, c[3][0] - 0.3, 0.4);
+    set($('hw-tok'), pt);
+    for (let k = 0; k < 3; k++) {
+      const e = $('hw-t' + k), p = eo(pr(lt, c[2][0] + 0.2 + k * 0.5, 0.5));
+      e.style.opacity = p; e.style.transform = `translateX(${(1 - p) * -24}px)`;
+      e.querySelector('.c').style.opacity = eo(pr(lt, c[2][0] + 0.55 + k * 0.5, 0.35));
+    }
+    const pn = inout(lt, c[3][0] - 0.2, c[4][0] - 0.3, 0.4);
+    set(nsvg, pn); set($('hw-neochips'), pn * eo(pr(lt, c[3][0] + 1.0, 0.5)));
+    const gp = eo(pr(lt, c[3][0] + 0.1, 1.8));
+    gnEls.forEach((e, i) => e.setAttribute('opacity', i / gnEls.length < gp ? 0.95 : 0));
+    geEls.forEach((e, i) => drawLine(e, clamp((gp - 0.15) * 1.4 - i * 0.004)));
+    const pg = inout(lt, c[4][0] - 0.2, S.dur, 0.4);
+    set(gsvg, pg); $('hw-gnnlab').style.opacity = pg * eo(pr(lt, c[4][0] + 1.6, 0.5));
+    const cp = eo(pr(lt, c[4][0] + 0.1, 0.5));
+    center.setAttribute('opacity', cp); place(center, CX, CY, lerp(0.5, 1, cp));
+    nb.forEach((n, i) => {
+      const p = eo(pr(lt, c[4][0] + 0.3 + i * 0.12, 0.5));
+      n.g.setAttribute('opacity', p); place(n.g, n.x, n.y, lerp(0.5, 1, p));
+      const f = ((lt - c[4][0] - 0.9 + i * 0.22) * 0.55) % 1;
+      const on = lt > c[4][0] + 0.9 && f > 0 && f < 1;
+      msgs[i].setAttribute('cx', lerp(n.x, CX, f)); msgs[i].setAttribute('cy', lerp(n.y, CY, f));
+      msgs[i].setAttribute('opacity', on ? Math.sin(Math.PI * f) : 0);
+    });
+    const sp = eo(pr(lt, c[4][0] + 2.0, 0.6));
+    score.setAttribute('opacity', sp); place(score, CX, 430, lerp(0.8, 1, sp));
+    center._c.setAttribute('fill', sp > 0.4 ? '#e8793a' : '#6f8599');
+    heads('hw-h', lt, S);
+  };
+})();
+</script>
+<script>
+/* ---------- démo : captures réelles, caméra et curseur ---------- */
+(function () {
+  const VW = 1440, VH = 674, IW = 1925, IH = 901, K = VW / IW, HUBPT = [904, 573];
+  function cam(x, y, z) {
+    const s = K * z; let tx = VW / 2 - s * x, ty = VH / 2 - s * y;
+    tx = Math.min(0, Math.max(VW - s * IW, tx)); ty = Math.min(0, Math.max(VH - s * IH, ty));
+    return {s, tx, ty};
+  }
+  const mixc = (a, b, p) => ({s: lerp(a.s, b.s, p), tx: lerp(a.tx, b.tx, p), ty: lerp(a.ty, b.ty, p)});
+  const put = (img, c) => { img.style.transform = `translate(${c.tx}px, ${c.ty}px) scale(${c.s})`; };
+  const toView = (c, x, y) => [c.tx + c.s * x, c.ty + c.s * y];
+  function box(e, c, x1, y1, x2, y2, pad = 10) {
+    const [a, b] = toView(c, x1, y1), [d, f] = toView(c, x2, y2);
+    e.style.left = (a - pad) + 'px'; e.style.top = (b - pad) + 'px';
+    e.style.width = (d - a + 2 * pad) + 'px'; e.style.height = (f - b + 2 * pad) + 'px';
+  }
+  const at = (e, x, y) => { e.style.left = x + 'px'; e.style.top = y + 'px'; };
+  R.demo = function (lt, S) {
+    const [c0, c1, c2, c3, c4, c5] = S.cues;
+    const pw = eo(pr(lt, 0.05, 0.7)); set($('dm-win'), pw, 0, lerp(0.95, 1, pw));
+    const f1 = eio(pr(lt, c3[0], 0.7)), f2 = eio(pr(lt, c5[0], 0.7));
+    const cam0 = mixc(cam(962, 450, 1), cam(985, 540, 1.55), eio(pr(lt, c1[0], 1.6)));
+    const cam1 = mixc(cam(962, 450, 1), cam(1250, 372, 1.3), eio(pr(lt, c3[0] + 0.2, 1.2)));
+    const cam2 = mixc(cam(962, 430, 1), cam(760, 430, 1.25), eio(pr(lt, c5[0] + 0.2, 1.2)));
+    put($('dm-img0'), cam0); put($('dm-img1'), cam1); put($('dm-img2'), cam2);
+    $('dm-img0').style.opacity = 1 - f1; $('dm-img1').style.opacity = f1 * (1 - f2); $('dm-img2').style.opacity = f2;
+    $('dm-name').textContent = f2 > 0.5 ? 'Dossier d\'alerte généré par le projet' : 'Neo4j Browser · capture réelle du projet';
+    set($('dm-chip'), eo(pr(lt, c1[0] + 0.9, 0.4)) * (1 - f1));
+    /* curseur : clic sur le compte hôte */
+    const [hx, hy] = toView(cam0, HUBPT[0], HUBPT[1]);
+    const pm = eio(pr(lt, c2[0] + 0.1, 1.2));
+    at($('dm-cursor'), lerp(VW - 140, hx, pm) - 6, lerp(VH - 90, hy, pm) - 4);
+    $('dm-cursor').style.opacity = pr(lt, c2[0], 0.3) * (1 - f1);
+    const click = pr(lt, c2[0] + 1.35, 0.6);
+    at($('dm-ripple'), hx, hy);
+    $('dm-ripple').style.opacity = (click > 0 && click < 1 ? 1 - click : 0) * (1 - f1);
+    $('dm-ripple').style.transform = `scale(${lerp(1, 3.2, click)})`;
+    at($('dm-ring'), hx, hy);
+    $('dm-ring').style.opacity = eo(pr(lt, c2[0] + 1.4, 0.3)) * (1 - f1);
+    at($('dm-co0'), hx + 60, hy - 150);
+    set($('dm-co0'), eo(pr(lt, c2[0] + 1.6, 0.4)) * (1 - f1));
+    /* tableau des numéros d'identité, puis colonne des codes */
+    const onDoss = lt > c5[0] - 0.1;
+    if (onDoss) { box($('dm-hl'), cam2, 480, 240, 1530, 662, 8); $('dm-hl').style.opacity = eo(pr(lt, c5[0] + 0.9, 0.5)); }
+    else { box($('dm-hl'), cam1, 628, 320, 1878, 428, 6); $('dm-hl').style.opacity = eo(pr(lt, c3[0] + 1.1, 0.4)) * (1 - pr(lt, c5[0] - 0.4, 0.3)); }
+    const [ax, ay] = toView(cam1, 1060, 428);
+    at($('dm-co1'), ax - 40, ay + 30);
+    set($('dm-co1'), eo(pr(lt, c3[0] + 1.3, 0.4)) * (1 - pr(lt, c4[0] - 0.2, 0.4)));
+    box($('dm-hl2'), cam1, 645, 330, 905, 358, 8);
+    $('dm-hl2').style.opacity = eo(pr(lt, c4[0] + 0.1, 0.35)) * (1 - pr(lt, c5[0] - 0.4, 0.3));
+    const [bx, by] = toView(cam1, 645, 358);
+    at($('dm-co2'), bx - 10, by + 30);
+    set($('dm-co2'), eo(pr(lt, c4[0] + 0.3, 0.4)) * (1 - pr(lt, c5[0] - 0.4, 0.3)));
+    at($('dm-co3'), 40, 548);
+    set($('dm-co3'), eo(pr(lt, c5[0] + 1.1, 0.4)));
+  };
+})();
+
+/* ---------- coopération entre banques ---------- */
+(function () {
+  const svg = $('cp-svg'), HUB = [1150, 580];
+  const BANKS = [[230, 380, 'Banque A'], [230, 580, 'Banque B'], [230, 780, 'Banque C']];
+  const bankEls = BANKS.map(([x, y, name]) => {
+    const g = el('g', {transform: `translate(${x},${y})`, opacity: 0}, svg);
+    el('path', {d: 'M-80 -18 L0 -64 L80 -18 Z', fill: '#2a3c4c'}, g);
+    el('rect', {x: -72, y: -14, width: 144, height: 70, rx: 6, fill: '#1b2a36', stroke: '#2f4353', 'stroke-width': 3}, g);
+    for (let k = -2; k <= 2; k++) el('rect', {x: k * 26 - 5, y: -4, width: 10, height: 50, fill: '#3b5266'}, g);
+    txt(g, 0, 92, name, 26, '#b9c6d2', 600);
+    return g;
+  });
+  const forbid = el('g', {opacity: 0}, svg);
+  el('path', {d: 'M 150 380 C 40 450, 40 710, 150 780', fill: 'none', stroke: '#f2667a', 'stroke-width': 4, 'stroke-dasharray': '14 12'}, forbid);
+  const cross = el('g', {transform: 'translate(78,580)'}, forbid);
+  el('circle', {r: 30, fill: '#0b1117', stroke: '#f2667a', 'stroke-width': 4}, cross);
+  el('path', {d: 'M-12 -12 L12 12 M12 -12 L-12 12', stroke: '#f2667a', 'stroke-width': 5, 'stroke-linecap': 'round'}, cross);
+  txt(forbid, 120, 306, 'Partage direct des données clients : interdit', 27, '#f2667a', 600, 'start');
+  const hub = el('g', {transform: `translate(${HUB[0]},${HUB[1]})`, opacity: 0}, svg);
+  el('rect', {x: -150, y: -120, width: 300, height: 240, rx: 26, fill: '#12303a', stroke: '#4fd1c5', 'stroke-width': 4}, hub);
+  el('rect', {x: -70, y: -96, width: 140, height: 12, rx: 6, fill: '#0b1117'}, hub);
+  el('rect', {x: -38, y: -18, width: 76, height: 58, rx: 10, fill: '#4fd1c5'}, hub);
+  el('path', {d: 'M-23 -18 V-38 A23 23 0 0 1 23 -38 V-18', fill: 'none', stroke: '#4fd1c5', 'stroke-width': 10}, hub);
+  txt(hub, 0, 22, 'Σ', 38, '#0b1117', 700);
+  txt(hub, 0, 92, 'Urne scellée', 30, '#eef3f6', 600);
+  txt(hub, 0, 168, 'Serveur du consortium', 27, '#b9c6d2', 600);
+  txt(hub, 0, 204, 'additionne sans jamais lire', 23, '#8596a6', 500);
+  const envs = [0, 1, 2].map(() => {
+    const g = el('g', {opacity: 0}, svg);
+    el('rect', {x: -34, y: -24, width: 68, height: 48, rx: 8, fill: '#e8b04a'}, g);
+    el('path', {d: 'M-34 -24 L0 4 L34 -24', fill: 'none', stroke: '#8a6414', 'stroke-width': 3}, g);
+    el('circle', {cx: 22, cy: 14, r: 12, fill: '#0b1117', opacity: 0.55}, g);
+    return g;
+  });
+  const back = el('g', {opacity: 0}, svg);
+  el('path', {d: 'M 1300 540 C 1360 500, 1380 480, 1414 470', fill: 'none', stroke: '#4fd1c5', 'stroke-width': 5, 'stroke-linecap': 'round'}, back);
+  el('path', {d: 'M 1414 470 L 1386 468 L 1394 494 Z', fill: '#4fd1c5'}, back);
+  const RAW = ['06 12 34 56 78', '07 98 76 54 32', '06 12 34 56 78'];
+  const COD = ['a8f3c91e0b…', '5c2e77d41f…', 'a8f3c91e0b…'];
+  R.coop = function (lt, S) {
+    const [c0, c1, c2, c3] = S.cues;
+    bankEls.forEach((g, k) => g.setAttribute('opacity', eo(pr(lt, c0[0] + 0.1 + k * 0.3, 0.45))));
+    forbid.setAttribute('opacity', eo(pr(lt, c0[0] + 1.4, 0.5)) * (1 - pr(lt, c1[0] + 0.2, 0.5)));
+    hub.setAttribute('opacity', eo(pr(lt, c1[0] + 0.4, 0.5)));
+    for (let k = 0; k < 3; k++) {
+      const d = $('cp-d' + k), app = eo(pr(lt, c0[0] + 0.4 + k * 0.3, 0.4)), sw = pr(lt, c1[0] + 0.6 + k * 0.35, 0.4);
+      d.style.opacity = app * (sw > 0 && sw < 1 ? Math.abs(1 - 2 * sw) : 1);
+      const coded = sw >= 0.5;
+      d.textContent = coded ? COD[k] : RAW[k];
+      d.style.color = coded ? '#4fd1c5' : '#eef3f6';
+      d.style.borderColor = coded ? '#4fd1c5' : '#243441';
+    }
+    const mp = eo(pr(lt, c1[0] + 2.1, 0.5));
+    $('cp-m0').style.opacity = mp; $('cp-m1').style.opacity = mp;
+    envs.forEach((g, k) => {
+      const p = eio(pr(lt, c2[0] + 0.3 + k * 0.4, 1.3));
+      g.setAttribute('transform', `translate(${lerp(790, HUB[0] - 60, p)},${lerp(370 + k * 200, HUB[1] - 96, p)})`);
+      g.setAttribute('opacity', p > 0 && p < 0.97 ? 1 : 0);
+    });
+    place(hub, HUB[0], HUB[1], 1 + 0.06 * pulse(lt, c2[0] + 2.2, 0.6));
+    back.setAttribute('opacity', eo(pr(lt, c3[0] + 0.3, 0.5)));
+    pop($('cp-res'), lt, c3[0] + 0.4, 0.6, 20);
+    pop($('cp-zero'), lt, c3[0] + 1.6, 0.6, 20);
+    heads('cp-h', lt, S);
+  };
+})();
+</script>
+<script>
+/* ---------- résultats ---------- */
+(function () {
+  const ROWS = [['Règles classiques', 3, '#5d7386'], ['IA sur la fiche seule', 5, '#3987e5'],
+    ['IA + réseau + IA sur graphe', 17, '#e8793a'], ['+ coopération entre banques', 18, '#1faa77']];
+  const rows = ROWS.map(([lab, n, col]) => {
+    const d = document.createElement('div'); d.className = 'rw';
+    d.innerHTML = `<div class="lab">${lab}</div><div class="ic">${'<div></div>'.repeat(20)}</div><div class="val" style="color:${col}">0 / 20</div>`;
+    $('rs-rows').appendChild(d);
+    return {el: d, n, col, ic: Array.from(d.querySelectorAll('.ic div')), val: d.querySelector('.val')};
+  });
+  const fps = [];
+  for (let k = 0; k < 100; k++) {
+    const d = document.createElement('div');
+    d.style.cssText = 'width:14px; height:14px; border-radius:50%; background:#2b3b49';
+    $('rs-dots').appendChild(d); fps.push(d);
+  }
+  R.results = function (lt, S) {
+    const c = S.cues;
+    const fade = 1 - 0.62 * pr(lt, c[5][0] - 0.2, 0.5);
+    pop($('rs-h0'), lt, 0.05, 0.5, 20);
+    $('rs-h0').style.opacity = eo(pr(lt, 0.05, 0.5)) * Math.max(fade, 0.25);
+    rows.forEach((r, k) => {
+      const a = c[k + 1][0] - 0.35;
+      const app = eo(pr(lt, a, 0.45));
+      r.el.style.opacity = app * fade;
+      r.el.style.transform = `translateX(${(1 - app) * -24}px)`;
+      const g = eio(pr(lt, a + 0.35, 1.0));
+      const on = Math.round(g * r.n);
+      r.ic.forEach((d, i) => {
+        const hit = i < on;
+        d.style.border = hit ? `3px solid ${r.col}` : '3px dashed #35485a';
+        d.style.background = hit ? r.col + '4d' : 'transparent';
+      });
+      r.val.textContent = on + ' / 20';
+    });
+    pop($('rs-kpis'), lt, c[5][0] + 0.2, 0.6, 26);
+    const fp = pop($('rs-fp'), lt, c[6][0] + 0.2, 0.6, 26);
+    fps.forEach((d, k) => {
+      const hot = k === 44 && fp > 0.5;
+      d.style.background = hot ? '#e8793a' : '#2b3b49';
+      d.style.transform = `scale(${hot ? 1.35 : 1})`;
+    });
+  };
+})();
+
+/* ---------- honnêteté, suite, dépôt ---------- */
+(function () {
+  R.next = function (lt, S) {
+    const [c0, c1, c2] = S.cues;
+    pop($('nx-honest'), lt, c0[0] + 0.1, 0.6, 26);
+    pop($('nx-road'), lt, c1[0] + 0.1, 0.6, 26);
+    pop($('nx-gh'), lt, c2[0] - 0.1, 0.6, 26);
+    heads('nx-h', lt, S);
+  };
+  R.outro = function (lt, S) {
+    const p = eo(pr(lt, 0.15, 0.9));
+    set($('ou-final'), p, (1 - p) * 30, lerp(0.97, 1, p));
+  };
+  /* réseau de fond de la fin */
+  const svg = $('ou-svg'); let seed = 91; const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const nodes = [];
+  for (let i = 0; i < 40; i++) nodes.push({x: 40 + rnd() * 1840, y: 40 + rnd() * 1000, ph: rnd() * 6.28, r: 3 + rnd() * 4});
+  const edges = [];
+  for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+    if (Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y) < 230 && edges.length < 80) edges.push([i, j]);
+  }
+  const eEls = edges.map(() => el('line', {stroke: '#4fd1c5', 'stroke-width': 1.5, opacity: 0.12}, svg));
+  const nEls = nodes.map(n => el('circle', {r: n.r, fill: '#4fd1c5', opacity: 0.26}, svg));
+  const drift = R.outro;
+  R.outro = function (lt, S) {
+    nodes.forEach((n, i) => {
+      n.cx = n.x + Math.sin(lt * 0.42 + n.ph) * 14; n.cy = n.y + Math.cos(lt * 0.36 + n.ph) * 12;
+      nEls[i].setAttribute('cx', n.cx); nEls[i].setAttribute('cy', n.cy);
+    });
+    edges.forEach(([i, j], k) => {
+      const e = eEls[k]; e.setAttribute('x1', nodes[i].cx); e.setAttribute('y1', nodes[i].cy);
+      e.setAttribute('x2', nodes[j].cx); e.setAttribute('y2', nodes[j].cy);
+    });
+    drift(lt, S);
+  };
+  /* QR code et URL injectés par make_motion.py */
+  ['nx-qr', 'ou-qr'].forEach(id => { if (ASSETS.qr) $(id).src = ASSETS.qr; });
+  ['nx-url', 'ou-url'].forEach(id => { $(id).textContent = ASSETS.url; });
+})();
+</script>
+<!--SCRIPTS-->
+<script>
+/* ---------- chapitres, sous-titres, définitions ---------- */
 const CHAPTERS = [
-  {name: 'Le problème', scenes: ['hook', 'what', 'hard']},
-  {name: "L'idée", scenes: ['idea', 'built']},
+  {name: 'Contexte', scenes: ['intro', 'trust']},
+  {name: 'Le problème', scenes: ['synth', 'bust', 'ring']},
+  {name: 'Le piège', scenes: ['quiz']},
+  {name: "L'idée", scenes: ['graph']},
+  {name: 'Le projet', scenes: ['how']},
   {name: 'Démo', scenes: ['demo']},
   {name: 'Coopération', scenes: ['coop']},
-  {name: 'Résultats', scenes: ['results', 'outro']},
+  {name: 'Résultats', scenes: ['results', 'next', 'outro']},
 ];
+const NOCAP = ['intro', 'outro'];  // le texte est déjà à l'écran
 const chapEls = CHAPTERS.map(c => {
   const d = document.createElement('div'); d.className = 'chap'; d.innerHTML = `${c.name}<div class="bar"><i></i></div>`;
   $('chapters').appendChild(d); return d;
 });
-
-/* ---------- scène : identité synthétique (grille) ---------- */
-for (let k = 0; k < 18; k++) { const m = document.createElement('div'); m.className = 'mini'; m.innerHTML = '<div class="a"></div><div class="l"></div>'; $('wt-grid').appendChild(m); }
-
-/* ---------- scène : l'idée (graphe) ---------- */
-const NS = 'http://www.w3.org/2000/svg';
-function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
-const IDEA = {
-  ring: [[760, 330], [690, 560], [850, 780], [1150, 800], [1340, 610], [1320, 360], [1030, 290]],
-  legit: [[250, 380], [330, 800], [1760, 440], [1720, 760], [1520, 850]],
-  shared: [{p: [860, 470], lab: 'Même téléphone'}, {p: [1210, 480], lab: 'Même appareil'}, {p: [1040, 650], lab: 'Même employeur'}],
-  edges: [[0, 0], [1, 0], [2, 0], [2, 2], [3, 2], [4, 2], [4, 1], [5, 1], [6, 1], [6, 0]],
-};
-const idSvg = $('id-svg');
-const halo = el('circle', {cx: 1020, cy: 580, r: 340, fill: 'rgba(232,121,58,0.07)', stroke: '#e8793a', 'stroke-width': 4, 'stroke-dasharray': '14 12', opacity: 0}, idSvg);
-const haloLab = el('text', {x: 1400, y: 250, 'text-anchor': 'start', fill: '#e8793a', 'font-size': 40, 'font-weight': 700, 'font-family': 'IBM Plex Sans', opacity: 0}, idSvg); haloLab.textContent = 'Anneau repéré';
-const edgeEls = IDEA.edges.map(([r, s]) => {
-  const [x1, y1] = IDEA.ring[r], [x2, y2] = IDEA.shared[s].p; const L = Math.hypot(x2 - x1, y2 - y1);
-  const e = el('line', {x1, y1, x2, y2, stroke: '#4fd1c5', 'stroke-width': 4, 'stroke-dasharray': L, 'stroke-dashoffset': L, opacity: 0.85}, idSvg); e._L = L; return e;
-});
-function personNode(x, y, parent, fill) {
-  const g = el('g', {transform: `translate(${x},${y})`, opacity: 0}, parent);
-  const c = el('circle', {r: 44, fill, stroke: '#0b1117', 'stroke-width': 6}, g);
-  el('circle', {cx: 0, cy: -10, r: 13, fill: '#0b1117', opacity: 0.55}, g);
-  el('path', {d: 'M-22 24 Q0 -4 22 24 Z', fill: '#0b1117', opacity: 0.55}, g);
-  const ok = el('g', {transform: 'translate(32,-32)'}, g);
-  el('circle', {r: 16, fill: '#4fd1c5'}, ok); const t = el('text', {x: 0, y: 7, 'text-anchor': 'middle', 'font-size': 20, 'font-weight': 700, fill: '#0b1117', 'font-family': 'IBM Plex Sans'}, ok); t.textContent = '✓';
-  g._c = c; g._x = x; g._y = y; return g;
-}
-const ringEls = IDEA.ring.map(([x, y]) => personNode(x, y, idSvg, '#6f8599'));
-const legitEls = IDEA.legit.map(([x, y]) => personNode(x, y, idSvg, '#4a5a69'));
-const sharedEls = IDEA.shared.map(({p: [x, y], lab}) => {
-  const g = el('g', {transform: `translate(${x},${y})`, opacity: 0}, idSvg);
-  el('rect', {x: -118, y: -34, width: 236, height: 68, rx: 34, fill: '#12303a', stroke: '#4fd1c5', 'stroke-width': 4}, g);
-  const t = el('text', {x: 0, y: 10, 'text-anchor': 'middle', 'font-size': 26, 'font-weight': 600, fill: '#eef3f6', 'font-family': 'IBM Plex Sans'}, g); t.textContent = lab;
-  g._x = x; g._y = y; return g;
-});
-
-/* ---------- scène : coopération ---------- */
-const cpSvg = $('cp-svg');
-const BANKS = [[250, 380, 'Banque A'], [250, 560, 'Banque B'], [250, 740, 'Banque C']];
-const HUB = [1300, 560];
-const bankEls = BANKS.map(([x, y, name]) => {
-  const g = el('g', {transform: `translate(${x},${y})`, opacity: 0}, cpSvg);
-  el('path', {d: 'M-80 -18 L0 -64 L80 -18 Z', fill: '#2a3c4c'}, g);
-  el('rect', {x: -72, y: -14, width: 144, height: 70, rx: 6, fill: '#1b2a36', stroke: '#2f4353', 'stroke-width': 3}, g);
-  for (let k = -2; k <= 2; k++) el('rect', {x: k * 26 - 5, y: -4, width: 10, height: 50, fill: '#3b5266'}, g);
-  const t = el('text', {x: 0, y: 96, 'text-anchor': 'middle', 'font-size': 26, 'font-weight': 600, fill: '#b9c6d2', 'font-family': 'IBM Plex Sans'}, g); t.textContent = name;
-  return g;
-});
-const forbid = el('g', {opacity: 0}, cpSvg);
-el('line', {x1: 250, y1: 470, x2: 250, y2: 480, stroke: '#f2667a', 'stroke-width': 0}, forbid);
-[[250, 470], [250, 650]].forEach(([x, y]) => {
-  const g = el('g', {transform: `translate(${x - 170},${y})`}, forbid);
-  el('circle', {r: 22, fill: 'rgba(242,102,122,0.18)', stroke: '#f2667a', 'stroke-width': 3}, g);
-  el('path', {d: 'M-8 -8 L8 8 M8 -8 L-8 8', stroke: '#f2667a', 'stroke-width': 4, 'stroke-linecap': 'round'}, g);
-});
-const forbidLab = el('text', {x: 80, y: 900, 'font-size': 26, fill: '#f2667a', 'font-weight': 600, 'font-family': 'IBM Plex Sans'}, forbid); forbidLab.textContent = 'Échange direct de données clients : interdit';
-const hub = el('g', {transform: `translate(${HUB[0]},${HUB[1]})`, opacity: 0}, cpSvg);
-el('rect', {x: -150, y: -120, width: 300, height: 240, rx: 30, fill: '#12303a', stroke: '#4fd1c5', 'stroke-width': 4}, hub);
-el('rect', {x: -40, y: -20, width: 80, height: 62, rx: 10, fill: '#4fd1c5'}, hub);
-el('path', {d: 'M-24 -20 V-42 A24 24 0 0 1 24 -42 V-20', fill: 'none', stroke: '#4fd1c5', 'stroke-width': 10}, hub);
-const hubSum = el('text', {x: 0, y: 26, 'text-anchor': 'middle', 'font-size': 40, 'font-weight': 700, fill: '#0b1117', 'font-family': 'IBM Plex Sans'}, hub); hubSum.textContent = 'Σ';
-const hubLab = el('text', {x: 0, y: 170, 'text-anchor': 'middle', 'font-size': 28, 'font-weight': 600, fill: '#eef3f6', 'font-family': 'IBM Plex Sans'}, hub); hubLab.textContent = 'Serveur du consortium';
-const hubLab2 = el('text', {x: 0, y: 208, 'text-anchor': 'middle', 'font-size': 24, fill: '#8596a6', 'font-family': 'IBM Plex Sans'}, hub); hubLab2.textContent = 'additionne sans lire';
-const envs = [0, 1, 2].map(k => {
-  const g = el('g', {opacity: 0}, cpSvg);
-  el('rect', {x: -34, y: -24, width: 68, height: 48, rx: 8, fill: '#e8b04a'}, g);
-  el('path', {d: 'M-34 -24 L0 4 L34 -24', fill: 'none', stroke: '#8a6414', 'stroke-width': 3}, g);
-  return g;
-});
-
-/* ---------- scène : résultats ---------- */
-[0, 25, 50, 75, 100].forEach(v => { const i = document.createElement('i'); i.style.left = (v * 10) + 'px'; $('rs-grid').appendChild(i); const s = document.createElement('span'); s.style.left = (v * 10) + 'px'; s.textContent = v + (v === 100 ? ' %' : ''); $('rs-grid').appendChild(s); });
-const RES = [15, 25, 85, 90];
-
-/* ---------- démo : caméra ---------- */
-const VW = 1440, VH = 674, IW = 1925, IH = 901, K = VW / IW;
-function cam(px, py, z) {
-  const s = K * z; let tx = VW / 2 - s * px, ty = VH / 2 - s * py;
-  tx = Math.min(0, Math.max(VW - s * IW, tx)); ty = Math.min(0, Math.max(VH - s * IH, ty));
-  return {s, tx, ty};
-}
-function mix(a, b, p) { return {s: lerp(a.s, b.s, p), tx: lerp(a.tx, b.tx, p), ty: lerp(a.ty, b.ty, p)}; }
-function place(img, c) { img.style.transform = `translate(${c.tx}px, ${c.ty}px) scale(${c.s})`; }
-function toView(c, x, y) { return [c.tx + c.s * x, c.ty + c.s * y]; }
-function box(elm, c, x1, y1, x2, y2, pad = 10) {
-  const [a, b] = toView(c, x1, y1), [d, e] = toView(c, x2, y2);
-  elm.style.left = (a - pad) + 'px'; elm.style.top = (b - pad) + 'px'; elm.style.width = (d - a + 2 * pad) + 'px'; elm.style.height = (e - b + 2 * pad) + 'px';
-}
-const HUBPT = [904, 573];
-
-/* ---------- rendus par scène ---------- */
-const R = {
-  hook(lt, S) {
-    const [c0, c1, c2] = S.cues;
-    const pc = eo(pr(lt, 0.05, 0.6));
-    const fadeCard = c2 ? 1 - 0.75 * pr(lt, c2[0], 0.6) : 1;
-    set($('hk-card'), pc * fadeCard, (1 - pc) * 30);
-    for (let k = 0; k < 3; k++) { const p = eo(pr(lt, c0[0] + 0.4 + k * 0.5, 0.4)); set($('hk-r' + k), p, 0, 1, `translateX(${(1 - p) * -20}px)`); }
-    $('hk-trust').style.width = lerp(8, 100, eio(pr(lt, c0[0], c0[1] - c0[0]))) + '%';
-    const bust = eio(pr(lt, c1[0] + 0.3, 1.4));
-    $('hk-used').style.width = lerp(18, 100, bust) + '%';
-    $('hk-used').style.background = bust > 0.5 ? 'var(--red)' : 'var(--teal)';
-    $('hk-trust').style.opacity = 1 - 0.7 * bust;
-    $('hk-card').style.borderColor = bust > 0.6 ? '#f2667a' : '#243441';
-    const st = eo(pr(lt, c1[0] + 1.6, 0.35));
-    $('hk-stamp').style.opacity = st * fadeCard;
-    $('hk-stamp').style.transform = `rotate(-12deg) scale(${lerp(1.6, 1, st)})`;
-    heads('hk-h', 3, lt, S);
-  },
-  what(lt, S) {
-    const [c0, c1, c2, c3] = S.cues;
-    const out = 1 - pr(lt, c3[0], 0.5);
-    const from = [[-700, 0], [0, -500], [700, 0], [0, 500]];
-    for (let k = 0; k < 4; k++) {
-      const a = k === 0 ? c0[0] + 0.2 : c1[0] + 0.1 + (k - 1) * 0.55;
-      const p = eo(pr(lt, a, 0.7));
-      $('wt-p' + k).style.opacity = p * out;
-      $('wt-p' + k).style.transform = `translate(${from[k][0] * (1 - p)}px, ${from[k][1] * (1 - p)}px)`;
-    }
-    const tl = eo(pr(lt, c2[0], 0.5)) * out;
-    set($('wt-tl'), tl, (1 - tl) * 20);
-    const mk = eio(pr(lt, c2[0] + 0.4, Math.max(1, (c2[1] - c2[0]) - 0.6)));
-    $('wt-marker').style.left = (mk * 100) + '%';
-    $('wt-marker').style.background = mk > 0.81 ? '#f2667a' : '#ffffff';
-    const minis = $('wt-grid').children;
-    for (let k = 0; k < minis.length; k++) { const p = eo(pr(lt, c3[0] + 0.3 + k * 0.07, 0.4)); set(minis[k], p, 0, lerp(0.6, 1, p)); }
-    const rl = eo(pr(lt, c3[0] + 1.2, 0.5)); set($('wt-ringlab'), rl, (1 - rl) * 16);
-    heads('wt-h', 4, lt, S);
-  },
-  hard(lt, S) {
-    const [c0, c1] = S.cues;
-    const pc = eo(pr(lt, 0.05, 0.6)); set($('hd-card'), pc, (1 - pc) * 30);
-    for (let k = 0; k < 4; k++) { const p = eo(pr(lt, c0[0] + 0.5 + k * 0.6, 0.4)); set($('hd-r' + k), p, 0, 1, `translateX(${(1 - p) * -20}px)`); }
-    const pn = eo(pr(lt, c1[0] + 0.1, 0.5)); set($('hd-count'), pn, (1 - pn) * 30);
-    $('hd-count').textContent = Math.round(15 * eo(pr(lt, c1[0] + 0.2, 1.3))) + ' %';
-    set($('hd-label'), eo(pr(lt, c1[0] + 0.6, 0.5)));
-    set($('hd-note'), eo(pr(lt, c1[0] + 1.2, 0.5)));
-    heads('hd-h', 2, lt, S);
-  },
-  idea(lt, S) {
-    const [c0, c1, c2] = S.cues;
-    [...ringEls, ...legitEls].forEach((g, k) => { const p = eo(pr(lt, c0[0] + 0.1 + k * 0.1, 0.45)); g.setAttribute('opacity', p); g.setAttribute('transform', `translate(${g._x},${g._y}) scale(${lerp(0.4, 1, p)})`); });
-    sharedEls.forEach((g, k) => { const p = eo(pr(lt, c1[0] + 0.1 + k * 0.45, 0.45)); g.setAttribute('opacity', p); g.setAttribute('transform', `translate(${g._x},${g._y}) scale(${lerp(0.5, 1, p)})`); });
-    edgeEls.forEach((e, k) => { const p = eio(pr(lt, c1[0] + 0.5 + k * 0.16, 0.6)); e.setAttribute('stroke-dashoffset', e._L * (1 - p)); });
-    const hp = eo(pr(lt, c2[0] + 0.2, 0.8));
-    halo.setAttribute('opacity', hp); halo.setAttribute('r', lerp(400, 340, hp));
-    haloLab.setAttribute('opacity', eo(pr(lt, c2[0] + 0.7, 0.5)));
-    ringEls.forEach(g => g._c.setAttribute('fill', hp > 0.3 ? '#e8793a' : '#6f8599'));
-    legitEls.forEach(g => g.setAttribute('opacity', Math.min(+g.getAttribute('opacity'), 1 - 0.55 * hp)));
-    heads('id-h', 3, lt, S);
-  },
-  built(lt, S) {
-    const c = S.cues; const act = [c[0][0], c[1][0], c[1][0] + 1.2, c[2][0], c[3][0], c[3][0] + 1.4];
-    for (let k = 0; k < 6; k++) {
-      const p = eo(pr(lt, act[k], 0.5));
-      const b = $('bt-b' + k); b.style.opacity = lerp(0.18, 1, p); b.style.transform = `translateY(${(1 - p) * 14}px)`;
-      b.style.borderColor = p > 0.5 ? '#4fd1c5' : '#243441';
-    }
-    const pc = eo(pr(lt, c[3][0] + 2.2, 0.5)); set($('bt-chips'), pc, (1 - pc) * 16);
-    const o = eo(pr(lt, 0.05, 0.5)); set($('bt-h0'), o, (1 - o) * 24);
-  },
-  demo(lt, S) {
-    const [c0, c1, c2, c3] = S.cues;
-    const pw = eo(pr(lt, 0.05, 0.7)); set($('dm-win'), pw, 0, lerp(0.95, 1, pw));
-    const base = cam(962, 450, 1), zoom = cam(985, 540, 1.55);
-    const pz = eio(pr(lt, c1[0], 1.6));
-    let cm = mix(base, zoom, pz);
-    const cross = eio(pr(lt, c3[0], 0.7));
-    const nidCam = mix(cam(962, 450, 1), cam(1250, 372, 1.3), eio(pr(lt, c3[0] + 0.2, 1.2)));
-    place($('dm-img1'), cm); place($('dm-img2'), nidCam);
-    $('dm-img1').style.opacity = 1 - cross; $('dm-img2').style.opacity = cross;
-    set($('dm-chip'), eo(pr(lt, c1[0] + 0.9, 0.4)) * (1 - cross));
-    // curseur vers le compte hôte
-    const [hx, hy] = toView(cm, HUBPT[0], HUBPT[1]);
-    const pm = eio(pr(lt, c2[0] + 0.1, 1.2));
-    const cx = lerp(VW - 140, hx, pm), cy = lerp(VH - 90, hy, pm);
-    const cur = $('dm-cursor'); cur.style.left = (cx - 6) + 'px'; cur.style.top = (cy - 4) + 'px';
-    cur.style.opacity = pr(lt, c2[0], 0.3) * (1 - cross);
-    const click = pr(lt, c2[0] + 1.35, 0.6);
-    const rp = $('dm-ripple'); rp.style.left = hx + 'px'; rp.style.top = hy + 'px';
-    rp.style.opacity = (click > 0 && click < 1 ? 1 - click : 0) * (1 - cross); rp.style.transform = `scale(${lerp(1, 3.2, click)})`;
-    const rg = $('dm-ring'); rg.style.left = hx + 'px'; rg.style.top = hy + 'px'; rg.style.opacity = eo(pr(lt, c2[0] + 1.4, 0.3)) * (1 - cross);
-    const co1 = $('dm-co1'); co1.style.left = (hx + 60) + 'px'; co1.style.top = (hy - 140) + 'px';
-    set(co1, eo(pr(lt, c2[0] + 1.6, 0.4)) * (1 - cross));
-    // tableau des numéros d'identité
-    box($('dm-hl'), nidCam, 628, 320, 1878, 428, 6);
-    $('dm-hl').style.opacity = eo(pr(lt, c3[0] + 1.2, 0.4));
-    const co2 = $('dm-co2'); const [ax, ay] = toView(nidCam, 1060, 428); co2.style.left = (ax - 40) + 'px'; co2.style.top = (ay + 30) + 'px';
-    set(co2, eo(pr(lt, c3[0] + 1.4, 0.4)) * (1 - pr(lt, c3[0] + 0.55 * (c3[1] - c3[0]) + 0.8, 0.3)));
-    const t2 = c3[0] + 0.55 * (c3[1] - c3[0]);
-    box($('dm-hl2'), nidCam, 645, 330, 905, 358, 8);
-    $('dm-hl2').style.opacity = eo(pr(lt, t2, 0.35));
-    const co3 = $('dm-co3'); const [bx, by] = toView(nidCam, 645, 358); co3.style.left = (bx - 10) + 'px'; co3.style.top = (by + 30) + 'px';
-    set(co3, eo(pr(lt, t2 + 0.2, 0.4)));
-  },
-  coop(lt, S) {
-    const [c0, c1, c2, c3] = S.cues;
-    const dim = 1 - 0.8 * pr(lt, c3[0], 0.6);
-    bankEls.forEach((g, k) => g.setAttribute('opacity', eo(pr(lt, c0[0] + 0.1 + k * 0.25, 0.4)) * dim));
-    forbid.setAttribute('opacity', eo(pr(lt, c0[0] + 1.2, 0.5)) * (1 - pr(lt, c1[0], 0.5)));
-    hub.setAttribute('opacity', eo(pr(lt, c1[0] + 0.2, 0.5)) * dim);
-    const codes = ['a8f3c91e0b…', '5c2e77d41f…', 'e10b9a3c66…'];
-    for (let k = 0; k < 3; k++) {
-      const d = $('cp-d' + k); const appear = eo(pr(lt, c0[0] + 0.5 + k * 0.25, 0.4));
-      const sw = pr(lt, c1[0] + 1.0 + k * 0.35, 0.4);
-      d.style.opacity = appear * dim * (sw > 0 && sw < 1 ? Math.abs(1 - 2 * sw) : 1);
-      if (sw >= 0.5) { d.textContent = codes[k]; d.style.color = '#4fd1c5'; d.style.borderColor = '#4fd1c5'; }
-      else { d.textContent = ['06 12 34 56 78', '07 98 76 54 32', '06 55 44 33 22'][k]; d.style.color = '#eef3f6'; d.style.borderColor = '#243441'; }
-    }
-    envs.forEach((g, k) => {
-      const p = eio(pr(lt, c2[0] + 0.2 + k * 0.35, 1.2));
-      const x = lerp(820, HUB[0] - 160, p), y = lerp(380 + k * 180, HUB[1] + (k - 1) * 40, p);
-      g.setAttribute('transform', `translate(${x},${y})`);
-      g.setAttribute('opacity', (p > 0 && p < 1 ? 1 : 0) * dim);
-    });
-    const pulse = pr(lt, c2[0] + 1.9, 0.5);
-    hub.setAttribute('transform', `translate(${HUB[0]},${HUB[1]}) scale(${1 + 0.08 * Math.sin(Math.PI * pulse)})`);
-    const res = eo(pr(lt, c2[0] + 2.3, 0.4)); set($('cp-res'), res * dim, (1 - res) * 16);
-    const big = eo(pr(lt, c3[0] + 0.3, 0.6)); set($('cp-big'), big, (1 - big) * 30);
-    heads('cp-h', 3, lt, S);
-  },
-  results(lt, S) {
-    const [c0, c1, c2, c3] = S.cues;
-    const dim = 1 - 0.85 * pr(lt, c3[0], 0.6);
-    const pt = eo(pr(lt, 0.05, 0.5)); set($('rs-title'), pt * (1 - 0.6 * pr(lt, c3[0], 0.6)), (1 - pt) * 20);
-    set($('rs-grid'), eo(pr(lt, 0.2, 0.5)) * dim);
-    const starts = [c0[0] + 0.2, c0[0] + 1.2, c1[0] + 0.3, c2[0] + 0.3];
-    for (let k = 0; k < 4; k++) {
-      const row = $('rs-r' + k); const appear = eo(pr(lt, starts[k] - 0.3, 0.4));
-      row.style.opacity = appear * dim;
-      const g = eio(pr(lt, starts[k], 1.1)); const v = RES[k] * g;
-      row.querySelector('.fill').style.width = (v * 10) + 'px';
-      const lab = row.querySelector('.v'); lab.textContent = Math.round(v) + ' %'; lab.style.left = (v * 10 + 18) + 'px';
-    }
-    const kp = eo(pr(lt, c3[0] + 0.3, 0.6)); set($('rs-kpis'), kp, (1 - kp) * 30);
-  },
-  outro(lt, S) {
-    const [c0, c1] = S.cues;
-    const off = 1 - pr(lt, c1[0], 0.5);
-    for (let k = 0; k < 3; k++) { const p = eo(pr(lt, c0[0] + 0.2 + k * 0.5, 0.45)); set($('ou-b' + k), p * off, (1 - p) * 24); }
-    const pf = eo(pr(lt, c1[0] + 0.2, 0.8)); set($('ou-final'), pf, (1 - pf) * 30);
-  },
-};
+const sceneOf = id => TL.scenes.find(s => s.id === id);
 
 function render(T) {
   for (const S of TL.scenes) {
     const node = $('sc-' + S.id); const lt = T - S.start;
     const o = Math.min(pr(lt, -0.25, 0.5), 1 - pr(lt, S.dur - 0.25, 0.5));
     node.style.opacity = o; node.style.display = o > 0 ? 'block' : 'none';
-    if (o > 0) R[S.id](lt, S);
+    if (o > 0 && R[S.id]) R[S.id](lt, S);
   }
-  // sous-titres
   const cap = $('caption'); let shown = false;
   for (const c of TL.captions) {
+    if (NOCAP.includes(c.s)) continue;
     if (T >= c.a - 0.15 && T <= c.b + 0.25) {
       cap.textContent = c.text; cap.style.opacity = Math.min(pr(T, c.a - 0.15, 0.2), 1 - pr(T, c.b + 0.05, 0.2)); shown = true; break;
     }
   }
   if (!shown) cap.style.opacity = 0;
-  // chapitres
+  const box = $('defbox'); let dshown = false;
+  TL.defs.forEach((d, k) => {
+    if (T < d.a || T > d.b) return;
+    const p = inout(T, d.a, d.b, 0.4);
+    $('def-n').textContent = `Lexique ${k + 1}/${TL.defs.length}`; $('def-t').textContent = d.term; $('def-x').textContent = d.text;
+    box.style.opacity = p; box.style.transform = `translateX(${(1 - eo(pr(T, d.a, 0.5))) * 60}px)`;
+    box.style.borderColor = pulse(T, d.a + 0.3, 0.8) > 0.5 ? '#ffffff' : '#4fd1c5';
+    dshown = true;
+  });
+  if (!dshown) box.style.opacity = 0;
   CHAPTERS.forEach((c, k) => {
     const sc = TL.scenes.filter(s => c.scenes.includes(s.id)); if (!sc.length) return;
     const a = sc[0].start, b = sc[sc.length - 1].start + sc[sc.length - 1].dur;
     const e = chapEls[k]; e.classList.toggle('on', T >= a && T < b); e.classList.toggle('done', T >= b);
     e.querySelector('i').style.width = (clamp((T - a) / (b - a)) * 100) + '%';
   });
-  $('topbar').style.opacity = pr(T, 0.2, 0.6);
+  const tr = sceneOf('trust'), ou = sceneOf('outro');
+  $('topbar').style.opacity = tr ? Math.min(pr(T, tr.start - 0.3, 0.6), ou ? 1 - pr(T, ou.start - 0.2, 0.5) : 1) : 1;
 }
 window.render = render;
 render(0);

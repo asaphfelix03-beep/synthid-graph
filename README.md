@@ -9,7 +9,7 @@
 
 ![Le réseau trahit le groupe](docs/media/demo-reseau.gif)
 
-▶ **Vidéo de présentation (2 min 17)** : [version sous-titrée](docs/media/synthid-graph-video-720p.mp4) · [version avec voix off](docs/media/synthid-graph-video-720p-voix.mp4)
+▶ **Vidéo explicative (4 min, pour tout public)** : [avec voix off](docs/media/synthid-graph-video-720p-voix.mp4) · [version sous-titrée seule](docs/media/synthid-graph-video-720p.mp4) — elle part du contexte (comment une banque accorde un crédit) et va jusqu'aux résultats, avec un lexique à l'écran.
 
 ---
 
@@ -56,6 +56,10 @@ Sur données simulées, avec un split temporel et des anneaux jamais vus à l'en
 - Alerter des communautés entières fait chuter la précision (11 % contre 38 %). Il vaut mieux alerter compte par compte, puis regrouper pour l'enquête.
 
 Rapport complet, avec 10 critères go/no-go : [docs/RESULTATS.md](docs/RESULTATS.md). Exemple de dossier généré : [docs/exemple-dossier-alerte.md](docs/exemple-dossier-alerte.md).
+
+Chaque alerte arrive avec ses raisons, prêtes pour l'enquêteur :
+
+![Dossier d'alerte généré automatiquement](docs/media/dossier.png)
 
 ## Architecture
 
@@ -170,15 +174,31 @@ Le projet suit **CRISP-DM**. Chaque phase a son module et un jalon vérifié aut
 - [ ] Tester HGT et R-GCN, puis l'entraînement par voisinage
 - [ ] Entraîner le modèle commun du consortium par apprentissage fédéré
 
-## Vidéo de présentation
+## Vidéo explicative
 
-La vidéo est générée à partir des vraies captures du projet :
+Une vidéo de **4 minutes** explique le projet sans prérequis : elle part du contexte (comment une banque accorde un crédit), montre ce qu'est une identité synthétique, pose un mini-quiz, puis déroule la solution et les résultats. Les mots techniques sont définis à l'écran au moment où ils arrivent.
+
+| Chapitre | Début | Contenu |
+|---|---:|---|
+| Contexte | 0:00 | Confiance, plafond de crédit |
+| Le problème | 0:19 | Identité synthétique, bust-out, anneau |
+| Le piège | 1:00 | Quiz : 4 clients, lesquels sont faux ? |
+| L'idée | 1:14 | Le graphe des points de contact partagés |
+| Le projet | 1:39 | Monde simulé, tokenisation, Neo4j, IA sur graphe |
+| Démo | 2:10 | Captures réelles : anneau, numéros d'identité, dossier d'alerte |
+| Coopération | 2:39 | OPRF et chiffrement homomorphe, expliqués simplement |
+| Résultats | 3:05 | 3 → 18 anneaux rusés sur 20, faux positifs, limites, dépôt |
+
+La vidéo est **générée par du code**, à partir des vraies captures du projet :
 
 ```bash
 pip install -e ".[video]"
 python tools/video/make_motion.py              # Windows : versions avec et sans voix off
 python tools/video/make_motion.py --no-voice   # autres systèmes : version sous-titrée
+python tools/video/make_motion.py --preview    # une image témoin par phrase, pour vérifier la mise en page
 ```
+
+Le texte, le minutage et les définitions vivent dans `SCRIPT` ([tools/video/make_motion.py](tools/video/make_motion.py)) ; les animations sont une page HTML rendue image par image par Chrome ([tools/video/motion.html](tools/video/motion.html)). La voix off utilise les voix Windows locales (aucun service en ligne).
 
 ## English summary
 
